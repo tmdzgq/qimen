@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>生旺奇门遁甲（离线版）</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+html{background:#ece4cf}
+body{min-height:100vh;font-family:"Songti SC","STSong","SimSun",serif;background:linear-gradient(165deg,#f8f5ee 0%,#f2ecdd 60%,#ede5d2 100%);color:#33302a;min-height:100vh}
+.wrap{max-width:940px;margin:0 auto;padding:26px 18px 70px}
+h1{font-size:27px;text-align:center;letter-spacing:6px;color:#4a3f2c;margin:12px 0 14px;font-weight:700}
+h1::before{content:"◆";color:#b08d57;font-size:14px;margin-right:12px;vertical-align:3px}
+h1::after{content:"◆";color:#b08d57;font-size:14px;margin-left:12px;vertical-align:3px}
+.sub{text-align:center;color:#9a8f79;font-size:12.5px;margin-bottom:20px;letter-spacing:1.5px}
+.tabs{display:flex;flex-wrap:wrap;margin:4px 0 14px}
+.tab{padding:8px 22px;margin:0 7px 8px 0;white-space:nowrap;cursor:pointer;font-size:15px;border-radius:22px;border:1px solid #cfc4a9;background:linear-gradient(180deg,#efe9d8,#e7dfc9);color:#6b5d45;user-select:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.7);transition:all .18s ease}
+.tab:hover{border-color:#b08d57;color:#4a3f2c;transform:translateY(-1px)}
+.tab.on{background:linear-gradient(180deg,#a2824f,#8c6d3f);color:#fff;border-color:#8c6d3f;box-shadow:0 3px 8px rgba(120,90,40,.35)}
+.searchbox{position:relative}
+#q{width:100%;padding:15px 18px;font-size:17px;border:1.5px solid #c4b696;border-radius:13px;background:#fffdf7;outline:none;font-family:inherit;box-shadow:inset 0 1px 4px rgba(90,70,40,.07),0 1px 2px rgba(90,70,40,.05);transition:all .18s ease}
+#q:focus{border-color:#8c6d3f;box-shadow:inset 0 1px 4px rgba(90,70,40,.07),0 0 0 4px rgba(176,141,87,.18)}
+.hint{font-size:12px;color:#a2977f;margin-top:7px;letter-spacing:.3px}
+#drop{position:absolute;left:0;right:0;top:100%;z-index:30;margin-top:5px;background:#fffdf7;border:1px solid #d3c8ad;border-radius:12px;max-height:360px;overflow:auto;display:none;box-shadow:0 12px 32px rgba(80,60,30,.18)}
+#drop::-webkit-scrollbar{width:8px}
+#drop::-webkit-scrollbar-thumb{background:#c9bfa8;border-radius:4px}
+#drop .it{padding:11px 15px;cursor:pointer;display:flex;gap:10px;align-items:baseline;border-bottom:1px solid #f0e9d8}
+#drop .it:last-child{border-bottom:none}
+#drop .it.active,#drop .it:hover{background:#f3ecda}
+.pair{font-weight:bold;font-size:16px;min-width:64px;color:#4a3f2c}
+.gname{color:#7a6c52;font-size:14px}
+.badge{font-size:11.5px;padding:3px 10px;border-radius:12px;margin-left:auto;white-space:nowrap;font-weight:700;letter-spacing:1px}
+.b-吉{background:#e2efe0;color:#2e7d32;border:1px solid #c2dcc0}
+.b-凶{background:#f7e4e0;color:#b3392f;border:1px solid #e8c6c0}
+.b-门定{background:#f6eed6;color:#8a6d1d;border:1px solid #e4d5ab}
+.filters{margin:18px 0 8px}
+.frow{margin-bottom:10px;display:flex;flex-wrap:wrap;align-items:center}
+.flabel{font-size:13px;color:#9a8f79;width:56px;margin-right:8px;flex:none}
+.chip{display:inline-block;font-size:13px;padding:5px 15px;margin:0 10px 12px 0;white-space:nowrap;line-height:1.3;border:1px solid #bdb096;border-radius:16px;cursor:pointer;background:#fffdf7;user-select:none;transition:all .15s ease;color:#5f574a}
+.chip:hover{border-color:#b08d57}
+.chip.on{background:linear-gradient(180deg,#a2824f,#8c6d3f);color:#fff;border-color:#8c6d3f;box-shadow:0 2px 5px rgba(120,90,40,.3)}
+#count{font-size:12.5px;color:#a2977f;margin:8px 2px}
+#detail,#symdetail,#pandetail{background:#fffdf7;border:1px solid #ddd3bd;border-radius:14px;padding:26px 30px;margin-top:12px;box-shadow:0 4px 18px rgba(90,70,40,.10);line-height:2.0;font-size:16px}
+#detail h2{font-size:21px;margin-bottom:6px;padding-bottom:10px;border-bottom:2px solid #e8dfc8;color:#4a3f2c}
+#detail .meta{color:#9a8f79;font-size:13.5px;margin:12px 0 16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+#detail .txt{line-height:2.05;font-size:16.5px;text-align:justify;color:#3a372f}
+#detail .xj{background:#faf6ea;border:1px dashed #d3c6a5;border-radius:10px;padding:14px 18px;margin-top:16px;line-height:2.0;font-size:15px;color:#5a5344}
+.xj-t{display:none}
+mark{background:#ffe9a8;padding:0 3px;border-radius:3px}
+.tag{display:inline-block;font-size:12px;background:#efe8d8;border-radius:5px;padding:2px 10px;margin-right:6px;color:#6b5d45;cursor:pointer;border:1px solid #ddd3bd;transition:all .15s}
+.tag:hover{background:#e2d7bd}
+.recip{margin-top:16px;font-size:13px;color:#a2977f}
+.recip a{color:#8c6d3f;cursor:pointer;text-decoration:underline}
+#list{margin-top:16px}
+#list .it{padding:11px 14px;cursor:pointer;display:flex;gap:10px;align-items:baseline;border-bottom:1px solid #ece4d2;background:#fffdf7;border-left:3px solid transparent;transition:all .12s ease}
+#list .it:first-child{border-radius:10px 10px 0 0}
+#list .it:last-child{border-radius:0 0 10px 10px;border-bottom:none}
+#list .it:hover{background:#f5efe0;border-left-color:#c9b488}
+#symdetail h3,#pandetail h3{font-size:20px;margin-bottom:8px;padding-bottom:9px;border-bottom:2px solid #e8dfc8;color:#4a3f2c}
+#symdetail .sec,#pandetail .sec{margin-bottom:11px;color:#3a372f}
+#symdetail .sec b,#pandetail .sec b{color:#8c6d3f}
+#symdetail details,#pandetail details{margin-top:14px;border-top:1px dashed #cfc4a9;padding-top:10px}
+#symdetail summary,#pandetail summary{cursor:pointer;color:#8c6d3f;font-size:14px}
+#symdetail .ref,#pandetail .ref{font-size:14px;color:#5f574a}
+#symdetail .ref p,#pandetail .ref p{margin:5px 0}
+#symlist{display:flex;flex-wrap:wrap;margin-bottom:8px}
+.symbtn{font-size:15.5px;padding:9px 20px;margin:0 8px 8px 0;white-space:nowrap;border:1px solid #cfc4a9;border-radius:11px;background:linear-gradient(180deg,#fffdf7,#f7f1e2);cursor:pointer;font-family:inherit;color:#4a3f2c;box-shadow:0 1px 3px rgba(90,70,40,.10);transition:all .15s ease}
+.symbtn:hover{border-color:#b08d57;transform:translateY(-1px);box-shadow:0 3px 8px rgba(90,70,40,.18)}
+.symbtn.on{background:linear-gradient(180deg,#a2824f,#8c6d3f);color:#fff;border-color:#8c6d3f}
+.pg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.pcell{position:relative;background:linear-gradient(180deg,#fffdf7,#f9f4e7);border:1.5px solid #d3c8ad;border-radius:13px;padding:16px 10px 6px;cursor:pointer;display:grid;grid-template-columns:auto 1fr;grid-template-areas:"hd hd" "god tg" "men tg" "star dg" "ft ft";align-content:start;column-gap:9px;box-shadow:0 2px 8px rgba(90,70,40,.08);transition:all .18s ease}
+.pcell:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(90,70,40,.16);border-color:#b08d57}
+.pcell.on{border-color:#8c6d3f;background:linear-gradient(180deg,#f7f0dc,#f2ead2);box-shadow:0 0 0 3px rgba(176,141,87,.25),0 4px 14px rgba(90,70,40,.18)}
+.pcell .pk{font-weight:bold;color:#8c6d3f;font-size:15px;display:flex;justify-content:space-between;align-items:center}
+.pcell .pm{color:#8a8378;font-size:12px}
+.pcell .pl{font-weight:bold;color:#4a3f2c}
+.pcell .mark{position:absolute;top:4px;right:4px;z-index:2;display:flex;flex-direction:row;align-items:center;gap:3px}
+.pcell .mark i{display:flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;font-style:normal;font-size:9px;font-weight:700;line-height:1}
+.pcell .mark i.mk-ms{background:#e03131;color:#fff;box-shadow:0 1px 3px rgba(150,30,20,.35)}
+.pcell .mark i.mk-kw{background:#fffdf7;color:#c0392b;border:1.5px solid #d98880;box-shadow:0 1px 3px rgba(150,30,20,.25)}
+.pstem{display:flex;flex-direction:column;align-items:center;margin:4px 0 6px;line-height:1.14}
+.ptg{font-size:36px;font-weight:700;color:#8c2f22;text-shadow:0 1px 0 #fff}
+.pdg{font-size:36px;font-weight:700;color:#2f4f6f;text-shadow:0 1px 0 #fff}
+.pline{font-size:14px;text-align:center;color:#3a372f}
+.pm2{font-size:12.5px;text-align:center;color:#8a8378}
+.panctl{margin-bottom:8px;font-size:15px;display:flex;flex-wrap:wrap;align-items:center;color:#5f574a}
+.panctl input{padding:8px 10px;margin:0 4px 6px 0;border:1.5px solid #c4b696;border-radius:9px;font-family:inherit;font-size:15px;width:64px;background:#fffdf7;outline:none;transition:all .15s;text-align:center}
+.panctl input:focus{border-color:#8c6d3f;box-shadow:0 0 0 3px rgba(176,141,87,.18)}
+#paninfo{display:inline-block;background:#f3ecd7;border:1px solid #d8cbab;border-radius:10px;padding:9px 18px;color:#6b5d45;font-size:15.5px;margin-bottom:8px;line-height:1.7}
+.pansub{font-size:12.5px;color:#a2977f;margin-bottom:8px}
+.pc-hd{grid-area:hd;display:flex;justify-content:flex-start;align-items:center;font-weight:bold;color:#8c6d3f;font-size:14px;line-height:1.25;margin-bottom:13px}
+.pc-god{grid-area:god;justify-self:start;font-size:13.5px;font-weight:700;color:#a06a12;letter-spacing:2px;display:inline-block;background:linear-gradient(180deg,#f8efdb,#f0e3c4);border:1px solid #e2d2aa;border-radius:10px;padding:1px 10px 1px 12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.7);margin:2px 0}
+.pc-men{grid-area:men;font-size:16px;font-weight:700;color:#4a3f2c;align-self:center;letter-spacing:1px}
+.pc-tg{grid-area:tg;justify-self:end;align-self:center;display:flex;align-items:center;gap:7px}
+.pc-tgc{display:flex;flex-direction:column;align-items:flex-end;font-size:31px;font-weight:700;color:#8c2f22;line-height:1.12;text-shadow:0 1px 0 #fff}
+.pc-jg{font-size:31px;font-weight:700;color:#7a3fa0;line-height:1.12;text-shadow:0 1px 0 #fff}
+.pc-star{grid-area:star;font-size:13px;font-weight:700;color:#3d5a3a;align-self:center;letter-spacing:1px}
+.pc-dg{grid-area:dg;font-size:31px;font-weight:700;color:#2f4f6f;text-align:right;line-height:1.12;text-shadow:0 1px 0 #fff;align-self:center}
+.pc-ft{grid-area:ft;font-size:11px;color:#8a8378;text-align:center;margin-top:4px}
+@media (max-width:560px){
+.wrap{padding:16px 10px 50px}
+.chip{display:inline-block;font-size:12.5px;padding:4px 12px;margin:0 7px 10px 0;white-space:nowrap;line-height:1.3}
+.flabel{width:48px;font-size:12px;margin-right:6px}
+.tab{padding:7px 14px;font-size:13.5px;margin:0 5px 7px 0}
+h1{font-size:19px;letter-spacing:3px}
+.sub{font-size:11.5px;margin-bottom:14px}
+.tab{padding:7px 14px;font-size:13.5px}
+.pg{gap:6px}
+.pcell{padding:7px 8px;column-gap:6px;border-radius:11px}
+.pc-hd{font-size:12px}
+.pc-god{font-size:12.5px;letter-spacing:2px;margin:2px 0 3px}
+.pc-men{font-size:16px}
+.pc-tg,.pc-dg{font-size:23px}
+.pc-star{font-size:14px}
+.pc-ft{font-size:10px;margin-top:4px}
+#q{font-size:15px;padding:12px 14px}
+#detail,#symdetail,#pandetail{padding:18px 16px;font-size:15px}
+.panctl input{width:52px;font-size:14px;padding:7px 6px}
+}
+.pc-io{display:inline-block;width:5px;height:5px;border-radius:50%;margin-right:4px;vertical-align:2px;opacity:.9}
+.pc-io.in{background:#e03131}
+.pc-io.out{background:#1971c2}
+.pc-csc{display:block;font-size:10.5px;letter-spacing:2px;margin-top:1px;font-weight:700}
+.pc-csc.w{color:#2e7d32}
+.pc-csc.p{color:#8a6d1d}
+.pc-csc.s{color:#b3392f}
+#panmodal{position:fixed;inset:0;background:rgba(40,30,15,.18);z-index:200;display:none;align-items:flex-end;justify-content:center}
+#pandlg{background:rgba(255,253,247,.93);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);width:100%;max-width:680px;max-height:82vh;display:flex;flex-direction:column;border-radius:18px 18px 0 0;box-shadow:0 -6px 34px rgba(0,0,0,.28);overflow:hidden}
+#pandlg-hd{display:flex;justify-content:space-between;align-items:center;padding:13px 18px;border-bottom:2px solid #e8dfc8;font-weight:700;color:#4a3f2c;font-size:16px;flex:none}
+#pandlg-x{font-size:28px;line-height:1;cursor:pointer;color:#8a8378;padding:0 8px;border-radius:8px}
+#pandlg-x:hover{background:#efe8d8;color:#4a3f2c}
+#pandlg #pandetail{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:18px 20px;margin-top:0;border:none;border-radius:0;box-shadow:none;max-height:none;flex:1 1 auto;background:#fbf7ec}
+@media (min-width:561px){
+#panmodal{align-items:center;padding:24px}
+#pandlg{border-radius:18px}
+}
+@media (max-width:560px){
+#pandlg-hd{font-size:15px;padding:11px 14px}
+#pandlg #pandetail{padding:14px 15px}
+}
+.panhead{background:#ece2c8;border:1px solid #d8cbab;border-radius:13px;padding:10px 12px 2px;margin-bottom:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
+.panhead .pansub{margin-bottom:8px}
+@media (max-width:560px){
+.pg{gap:5px}
+.pcell{aspect-ratio:1/1;min-height:0;padding:4px 5px;column-gap:3px;overflow:hidden}
+.pc-hd{font-size:10px}
+.pc-god{font-size:10px;letter-spacing:1px;padding:0 6px 0 8px;margin:1px 0 1px;border-radius:8px}
+.pc-men{font-size:11.5px}
+.pc-tgc{font-size:16px}
+.pc-jg{font-size:16px}
+.pc-dg{font-size:16px;margin-top:1px}
+.pc-star{font-size:10.5px;margin-top:1px}
+.pc-csc{display:none}
+.pc-ft{font-size:8px;margin-top:1px}
+}
+.hd{background:linear-gradient(140deg,#26211b 0%,#3b3025 45%,#4f3f29 78%,#5b4a2f 100%);border-radius:18px;padding:36px 18px 18px;margin-bottom:18px;box-shadow:0 6px 20px rgba(60,45,20,.35),inset 0 1px 0 rgba(255,255,255,.08);position:relative;overflow:hidden;text-align:center}
+.hd::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% -30%,rgba(214,180,120,.30),transparent 62%);pointer-events:none}
+.hd h1{position:relative;color:#f3e8cd;font-size:33px;letter-spacing:13px;margin:0 0 5px;font-weight:700;text-shadow:0 2px 7px rgba(0,0,0,.5)}
+.hd h1::before,.hd h1::after{content:none}
+.hd .seal{position:relative;display:inline-block;background:linear-gradient(180deg,#b3402f,#96271a);color:#ffe9c9;font-size:13px;letter-spacing:2px;padding:4px 8px;border-radius:5px;margin-left:16px;vertical-align:9px;box-shadow:0 2px 5px rgba(0,0,0,.4);font-weight:400}
+.hdiv{position:relative;display:flex;align-items:center;justify-content:center;gap:12px;color:#c9a86a;font-size:10px;margin:5px 0 20px}
+.hdiv span{display:block;width:120px;height:1px}
+.hdiv span:first-child{background:linear-gradient(90deg,transparent,#c9a86a)}
+.hdiv span:last-child{background:linear-gradient(90deg,#c9a86a,transparent)}
+.hd .tabs{position:relative;justify-content:center;margin:2px 0 2px}
+.hd .tab{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.22);color:#e8dcc0;margin:0 5px 8px 0;box-shadow:none;text-shadow:none}
+.hd .tab:hover{background:rgba(255,255,255,.18);color:#fff;border-color:rgba(255,255,255,.35)}
+.hd .tab.on{background:linear-gradient(180deg,#d8b075,#b08d57);border-color:#e2c491;color:#2e2418;font-weight:700;text-shadow:0 1px 0 rgba(255,255,255,.35)}
+@media (max-width:560px){
+.hd{padding:26px 12px 12px;border-radius:16px;margin-bottom:14px}
+.hd h1{font-size:25px;letter-spacing:8px}
+.hd .seal{font-size:10.5px;margin-left:10px;vertical-align:6px;padding:2px 5px}
+.hdiv{margin:4px 0 14px}
+.hdiv span{width:52px}
+.hd .tab{padding:6px 13px;font-size:13px;margin:0 4px 6px 0}
+}
+.btnbox{display:inline-flex;white-space:nowrap}
+@media (max-width:560px){
+.panhead{padding:8px 10px 1px;margin-bottom:10px}
+.panctl{font-size:13px;margin-bottom:4px}
+.panctl input{font-size:12.5px;padding:6px 2px;margin:0 2px 5px 0}
+#py{width:46px}
+#pm,#pd,#ph,#pmin{width:26px}
+.panctl .symbtn{padding:6px 12px;font-size:13px;margin:0 4px 5px 0}
+#paninfo{font-size:12px;padding:5px 10px;margin-bottom:6px}
+}
+/* ===== 网格化重设计：筛选组与符号按钮 ===== */
+.frow{display:block;margin-bottom:10px}
+.flabel{display:block;width:auto;margin:0 0 6px;font-size:12px;letter-spacing:3px;color:#a2977f}
+#f-luck{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+#f-men,#f-state{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.chip{display:block;margin:0;text-align:center;padding:7px 2px;border-radius:10px;font-size:12.5px;background:linear-gradient(180deg,#fffdf7,#f4edda);box-shadow:0 1px 2px rgba(90,70,40,.10);border:1px solid #cfc4a9;color:#5f574a}
+.chip.on{background:linear-gradient(180deg,#caa25f,#a67c3e);color:#fff;border-color:#8c6d3f;box-shadow:0 2px 7px rgba(120,90,40,.40);text-shadow:0 1px 1px rgba(0,0,0,.22);font-weight:700}
+#symlist{display:grid;grid-template-columns:repeat(auto-fit,minmax(72px,1fr));gap:9px;margin-bottom:14px}
+.symbtn{display:block;margin:0;width:100%;text-align:center;padding:11px 4px;font-size:15px;border-radius:11px}
+@media (max-width:560px){
+#f-luck,#f-men,#f-state{gap:6px}
+.chip{font-size:12px;padding:6px 2px;border-radius:9px}
+#symlist{grid-template-columns:repeat(auto-fit,minmax(62px,1fr));gap:7px}
+.symbtn{padding:9px 2px;font-size:14px}
+}
+#errtoast{display:none;position:fixed;top:0;left:0;right:0;z-index:999;background:#b3402f;color:#fff;font-size:12px;padding:6px 10px;text-align:center}
+#py{width:56px}
+#pm,#pd,#ph,#pmin{width:30px}
+/* ===== 瓷牌精修：符号按钮与筛选 ===== */
+#symlist{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:14px}
+.symbtn{flex:0 0 calc(25% - 6px);max-width:150px;margin:0;padding:10px 4px;font-size:15.5px;letter-spacing:2px;border-radius:12px;background:linear-gradient(180deg,#fffdf7,#f6efdd);border:1px solid #d5c9ac;box-shadow:0 1px 3px rgba(90,70,40,.10),inset 0 1px 0 rgba(255,255,255,.8);color:#4a3f2c}
+.symbtn:hover{border-color:#b08d57;color:#7a5c28;transform:translateY(-1px);box-shadow:0 3px 7px rgba(90,70,40,.16),inset 0 1px 0 rgba(255,255,255,.8)}
+.symbtn.on{background:linear-gradient(180deg,#d8b075,#b08d57);color:#fff;border-color:#a67c3e;text-shadow:0 1px 1px rgba(0,0,0,.22);box-shadow:0 3px 9px rgba(120,90,40,.38),inset 0 1px 0 rgba(255,255,255,.35);font-weight:700}
+#f-luck,#f-men{display:flex;flex-wrap:wrap;justify-content:center;gap:7px}
+#f-luck .chip{flex:0 0 calc(33.33% - 5px)}
+#f-men .chip{flex:0 0 calc(25% - 6px)}
+.chip{display:block;margin:0;text-align:center;padding:7px 2px;border-radius:11px;font-size:12.5px;letter-spacing:1px;background:linear-gradient(180deg,#fffdf7,#f6efdd);border:1px solid #d5c9ac;box-shadow:0 1px 3px rgba(90,70,40,.10),inset 0 1px 0 rgba(255,255,255,.8);color:#5f574a}
+.chip:hover{border-color:#b08d57}
+.chip.on{background:linear-gradient(180deg,#d8b075,#b08d57);color:#fff;border-color:#a67c3e;font-weight:700;box-shadow:0 2px 7px rgba(120,90,40,.35),inset 0 1px 0 rgba(255,255,255,.3);text-shadow:0 1px 1px rgba(0,0,0,.18)}
+@media (max-width:560px){
+.symbtn{flex-basis:calc(25% - 6px);padding:9px 2px;font-size:14.5px;letter-spacing:1px}
+#f-luck .chip{flex-basis:calc(33.33% - 5px)}
+#f-men .chip{flex-basis:calc(25% - 6px)}
+.chip{font-size:12px;padding:6px 2px}
+}
+.panel{background:linear-gradient(180deg,#faf5e8,#f3ebd4);border:1px solid #d8cba6;border-radius:14px;padding:11px 12px 3px;margin-bottom:14px;box-shadow:0 2px 9px rgba(90,70,40,.09),inset 0 1px 0 rgba(255,255,255,.75)}
+.panel-t{font-size:12px;color:#8c6d3f;letter-spacing:4px;font-weight:700;border-left:3px solid #c9a05e;padding-left:9px;margin:2px 0 11px}
+.panel .frow{margin-bottom:9px}
+.panel #symlist{margin-bottom:8px}
+@media (max-width:560px){
+.panel{padding:9px 9px 2px;border-radius:12px}
+.panel-t{font-size:11px;letter-spacing:3px;margin:1px 0 9px}
+}
+/* ===== 大师精修 · 全局细节 ===== */
+body{font-family:"Noto Serif SC","Source Han Serif SC","Songti SC","STSong","SimSun",serif}
+/* 卡片界画内框（回纹意） */
+#detail,#symdetail,.panel{position:relative}
+#detail::before,#symdetail::before,.panel::before{content:"";position:absolute;top:7px;left:7px;right:7px;bottom:7px;border:1px solid rgba(176,141,87,.30);border-radius:9px;pointer-events:none}
+.panel::before{border-radius:10px}
+.panel{padding:13px 14px 5px}
+.panel-t{display:flex;align-items:center;gap:9px;border-left:none;padding-left:0;margin:2px 0 12px}
+.panel-t::before{content:"";width:3px;height:13px;background:linear-gradient(180deg,#d8b075,#b08d57);border-radius:2px;flex:none}
+.panel-t::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(176,141,87,.55),rgba(176,141,87,.06))}
+/* 标题渐变分隔 */
+#detail h2,#symdetail h3,#pandetail h3{border-bottom:2px solid transparent;border-image:linear-gradient(90deg,#c9a05e,rgba(201,160,94,.12)) 1;padding-bottom:9px}
+#pandlg-hd{border-bottom:1px solid transparent;border-image:linear-gradient(90deg,rgba(201,160,94,.65),rgba(201,160,94,.12)) 1}
+/* 徽标字距 */
+.badge{letter-spacing:2px}
+/* 列表微交互 */
+#list .it{transition:all .13s ease}
+#list .it:hover{transform:translateX(3px)}
+/* 按压反馈 */
+.symbtn:active,.chip:active,.tab:active,.pcell:active{transform:translateY(1px)}
+/* 页脚引线 */
+.ft{display:flex;align-items:center;justify-content:center;gap:12px}
+.ft::before,.ft::after{content:"";width:64px;height:1px}
+.ft::before{background:linear-gradient(90deg,transparent,rgba(154,143,121,.6))}
+.ft::after{background:linear-gradient(90deg,rgba(154,143,121,.6),transparent)}
+/* 弹层内容滚动条 */
+#pandlg #pandetail::-webkit-scrollbar{width:6px}
+#pandlg #pandetail::-webkit-scrollbar-thumb{background:#c9bfa8;border-radius:3px}
+/* 锦匣与瓷牌过渡统一 */
+.panel,.chip,.symbtn,#list .it,.pcell{transition:all .16s ease}
+@media (max-width:560px){
+#detail::before,#symdetail::before,.panel::before{top:5px;left:5px;right:5px;bottom:5px}
+.ft::before,.ft::after{display:none}
+.ft{font-size:10.5px;letter-spacing:.5px;flex-wrap:wrap}
+}
+/* ===== 绢纹瓷牌 ===== */
+.symbtn,.chip{position:relative;overflow:hidden}
+.symbtn::after,.chip::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;background:repeating-linear-gradient(45deg,rgba(176,141,87,.05) 0 1px,transparent 1px 4px),repeating-linear-gradient(-45deg,rgba(176,141,87,.05) 0 1px,transparent 1px 4px)}
+.symbtn::before{content:"";position:absolute;top:5px;left:5px;width:9px;height:9px;border-top:1px solid rgba(176,141,87,.6);border-left:1px solid rgba(176,141,87,.6);border-top-left-radius:3px;pointer-events:none}
+.symbtn.on{box-shadow:0 3px 9px rgba(120,90,40,.38),0 0 0 2px rgba(216,176,117,.5),inset 0 1px 0 rgba(255,255,255,.35)}
+.symbtn.on::before{border-color:rgba(255,255,255,.9)}
+.chip.on{box-shadow:0 2px 7px rgba(120,90,40,.35),0 0 0 1.5px rgba(216,176,117,.5),inset 0 1px 0 rgba(255,255,255,.3)}
+.hd .tab.on{box-shadow:0 3px 8px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.45)}
+/* 功能键单独定型，不受瓷牌网格规则影响 */
+.panctl .symbtn{flex:none;max-width:none;width:auto;padding:7px 15px;font-size:13.5px;letter-spacing:1px;margin:0 5px 5px 0}
+.panctl .symbtn::before{top:4px;left:4px;width:7px;height:7px}
+@media (max-width:560px){
+.panctl .symbtn{padding:6px 11px;font-size:12.5px}
+}
+/* ===== 古色古香 · 全局改版 ===== */
+body{background:radial-gradient(ellipse at 50% 0%,#f8f3e6,#f1ead7 60%,#e9dfc6);color:#2f2a23}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background:repeating-linear-gradient(0deg,rgba(120,100,60,.022) 0 1px,transparent 1px 3px)}
+.wrap{position:relative;z-index:1}
+.flabel,.panel-t,.badge,.hint,.pc-god,#count,.gname,.recip,.pansub,.pc-ft,#paninfo,.xj-t,#symdetail .sec b,#pandetail .sec b{font-family:"Kaiti SC","STKaiti","KaiTi","Songti SC",serif}
+#detail,#symdetail,#pandetail,.panel,.pcell{border-color:#b9a06a}
+#detail,#symdetail,.panel{box-shadow:0 3px 12px rgba(90,70,40,.12)}
+#detail::before,#symdetail::before,.panel::before{border-color:rgba(185,160,106,.45)}
+.chip,.symbtn{background:linear-gradient(180deg,#fbf7ec,#f3ebd6);border-color:#c3ad7d;color:#4a3b28;border-radius:8px}
+.chip.on{background:linear-gradient(180deg,#a63a2c,#8c2b1f);border-color:#7c251b;color:#f8ecd9;text-shadow:0 1px 1px rgba(0,0,0,.3);box-shadow:0 2px 7px rgba(120,40,25,.35),inset 0 1px 0 rgba(255,255,255,.18)}
+.symbtn.on{background:linear-gradient(180deg,#a63a2c,#8c2b1f);border-color:#7c251b;color:#f8ecd9;text-shadow:0 1px 1px rgba(0,0,0,.3);box-shadow:0 3px 9px rgba(120,40,25,.38),0 0 0 2px rgba(216,176,117,.4),inset 0 1px 0 rgba(255,255,255,.18)}
+.symbtn.on::before{border-color:rgba(248,236,217,.85)}
+.pc-tgc{color:#9e2b22}
+.pc-dg{color:#2f4858}
+.pc-god{background:linear-gradient(180deg,#f6ecd2,#ecdcb2);border-color:#d3ba84;color:#8a5a14}
+.hd .tab.on{background:linear-gradient(180deg,#c9a05e,#a67c3e)}
+#detail .txt,#symdetail,#pandetail{color:#3a332a}
+/* ===== 宣纸肌理 · 墨韵 ===== */
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0.42 0 0 0 0 0.36 0 0 0 0 0.24 0 0 0 0.05 0'/></filter><rect width='200' height='200' filter='url(%23p)'/></svg>"),radial-gradient(240px 170px at 88% 5%,rgba(58,52,42,.06),transparent 70%),radial-gradient(150px 110px at 6% 96%,rgba(58,52,42,.05),transparent 70%),radial-gradient(70px 50px at 92% 12%,rgba(58,52,42,.05),transparent 70%)}
+.wrap{position:relative;z-index:1}
+#detail h2::before{content:"";display:inline-block;width:14px;height:14px;margin-right:8px;vertical-align:1px;border-radius:52% 48% 58% 42% / 46% 56% 44% 54%;background:radial-gradient(closest-side, rgba(35,30,23,.95) 0%, rgba(35,30,23,.72) 32%, rgba(35,30,23,.34) 58%, rgba(35,30,23,.12) 76%, transparent 82%),radial-gradient(5px 4px at 70% 64%, rgba(35,30,23,.55), transparent 72%),radial-gradient(3px 3px at 30% 30%, rgba(35,30,23,.4), transparent 70%)}
+#symdetail h3::before,#pandetail h3::before{content:"";display:inline-block;width:14px;height:14px;margin-right:8px;vertical-align:1px;border-radius:52% 48% 58% 42% / 46% 56% 44% 54%;background:radial-gradient(closest-side, rgba(35,30,23,.95) 0%, rgba(35,30,23,.72) 32%, rgba(35,30,23,.34) 58%, rgba(35,30,23,.12) 76%, transparent 82%),radial-gradient(5px 4px at 70% 64%, rgba(35,30,23,.55), transparent 72%),radial-gradient(3px 3px at 30% 30%, rgba(35,30,23,.4), transparent 70%)}
+#listHead{cursor:pointer;user-select:none}
+.ltri{margin-left:8px;color:#a4761c;font-size:11px;flex:none;display:inline-block;animation:triHint 1.6s ease-in-out infinite}
+@keyframes triHint{0%,100%{transform:translateY(0);opacity:.7}50%{transform:translateY(2.5px);opacity:1}}
+#listHead:hover .ltri{color:#7a5c1c}
+#listPanel #count{margin:2px 4px 6px}
+#listPanel #list{margin-bottom:6px}
+/* 自绘折叠三角 + 呼吸hint（符号详情/宫位弹窗） */
+#symdetail summary::-webkit-details-marker,#pandetail summary::-webkit-details-marker{display:none}
+#symdetail summary,#pandetail summary{list-style:none;cursor:pointer;text-align:center}
+#symdetail summary::before,#pandetail summary::before{content:"";width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid #a4761c;display:inline-block;margin-right:7px;vertical-align:1px;animation:triHint 1.6s ease-in-out infinite}
+#symdetail summary:hover,#pandetail summary:hover{color:#7a5c1c}
+#bnav{display:none}
+@media (max-width:560px){
+.hd .tabs{display:none}
+.wrap{padding-bottom:84px}
+#bnav{display:flex;position:fixed;left:8px;right:8px;bottom:calc(26px + env(safe-area-inset-bottom));z-index:150;background:linear-gradient(180deg,#4a3b28,#31281c);border:1px solid #6b5a3f;border-radius:15px;box-shadow:0 6px 18px rgba(0,0,0,.32);padding:8px 4px}
+.bn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:2px 0;user-select:none}
+.bn i{display:flex;align-items:center;justify-content:center;width:25px;height:25px;border-radius:6px;font-style:normal;font-size:12.5px;font-weight:700;font-family:"Kaiti SC","STKaiti","KaiTi",serif;color:#d8c9a6;border:1px solid rgba(216,201,166,.32);background:rgba(255,255,255,.04);box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
+.bn b{font-size:10px;font-weight:400;color:#c4b48f;letter-spacing:1px}
+.bn.on i{background:linear-gradient(180deg,#d8b075,#a67c3e);color:#2e2418;border-color:#e2c491;box-shadow:0 2px 6px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.4)}
+.bn.on b{color:#ecdfc0}
+.bn:active i{transform:translateY(1px)}
+}
+</style>
+<base target="_blank">
+</head>
+<body>
+<div id="errtoast"></div>
+<div class="wrap">
+  <div class="hd">
+  <h1>生旺奇门遁甲<span class="seal">生旺</span></h1>
+  <div class="hdiv"><span></span>◆<span></span></div>
+  <div class="tabs">
+    <span class="tab on" data-t="pan">奇门排盘</span><span class="tab" data-t="ky">十干克应</span><span class="tab" data-t="stem">十天干</span><span class="tab" data-t="star">九星</span><span class="tab" data-t="gate">八门</span><span class="tab" data-t="god">八神</span>
+  </div>
+  </div>
+  <div id="kybox">
+    <div class="searchbox">
+      <input id="q" placeholder="输入天干（如：乙），或组合（如：乙丙），或格局名/关键词（如：青龙逃走）" autocomplete="off">
+      <div id="drop"></div>
+    </div>
+    <div class="hint">单天干 = 查该天盘干全部组合（乙 → 乙加戊、乙加乙、乙加丙…）｜两干 = 精确组合（乙丙 = 乙加丙）｜↑↓ 选择，回车查看，Esc 清空</div>
+    <div class="panel" id="listPanel">
+      <div class="panel-t" id="listHead"><span id="listHeadTxt">克应列表</span><span class="ltri" id="listTri">▲</span></div>
+      <div id="count"></div>
+      <div id="list"></div>
+    </div>
+    <div id="detail"></div>
+  </div>
+  <div id="symbox" style="display:none">
+    <div class="panel"><div class="panel-t">符号一览</div>
+    <div id="symlist"></div></div>
+    <div id="symdetail"></div>
+  </div>
+    <div id="panbox" style="display:none">
+    <div class="panhead">
+    <div class="panctl">公历 <input id="py" type="number" value="2026"> 年 <input id="pm" type="number" value="9"> 月 <input id="pd" type="number" value="24"> 日 <input id="ph" type="number" value="9"> 时 <input id="pmin" type="number" value="13"> 分 <span class="btnbox"><button id="btnnow" class="symbtn">现在</button> <button id="btnqi" class="symbtn">起局</button></span></div>
+    <div id="paninfo" class="pansub"></div>
+    </div>
+    <div id="pangrid" class="pg"></div>
+    <div id="panmodal">
+      <div id="pandlg">
+        <div id="pandlg-hd"><span id="pandlg-title">宫位详解</span><span id="pandlg-x">×</span></div>
+        <div id="pandetail"></div>
+      </div>
+    </div>
+  </div>
+<div class="sub ft" style="margin-top:26px">由生旺风水-PIANO所有｜仅供学习参考。｜ 版本 v20260928-8</div>
+</div>
+<div id="bnav">
+  <span class="bn on" data-t="pan"><i>排</i><b>排盘</b></span>
+  <span class="bn" data-t="ky"><i>应</i><b>克应</b></span>
+  <span class="bn" data-t="stem"><i>仪</i><b>奇仪</b></span>
+  <span class="bn" data-t="gate"><i>门</i><b>八门</b></span>
+  <span class="bn" data-t="star"><i>星</i><b>九星</b></span>
+  <span class="bn" data-t="god"><i>神</i><b>八神</b></span>
+</div>
+
+<script>
+window.addEventListener("error",function(e){var d=document.getElementById("errtoast");if(d){d.style.display="block";d.textContent="脚本错误："+(e.message||"未知")+" @"+(e.lineno||"?")+"行（请截图反馈）";}});
+var KE = [{"g": "戊", "d": "戊", "n": "青龙伏吟", "l": "凶", "t": "甲甲比肩，名为“青龙伏吟”。遇此，凡事不利，道路闭塞，以守为好。伏吟主本地，主内部，主迟，如果是六甲之时问事，尚可谋为行动。", "pair": "戊加戊", "x": "名为伏吟，凡事不利，道路闭塞，以守为好。测投资，资本难以周转，要双倍的投。测出行，戊就是山，阻隔重重，会堵车。测婚姻，没有动向，难变。测疾病，有肿胀的地方、胃胀难受、不想吃东西、混混沌沌、想睡觉。测办事，一次办不成，需要不断的完善和补充才能办成。戊加戊作用在人身上，主愚钝、无知、不转弯、死心眼；作用在人事上，闭塞不通，推行不开，迟缓。"}, {"g": "戊", "d": "乙", "n": "青龙和会", "l": "门定", "t": "甲、乙均为东方木，东方木又名青龙，故名为“青龙和会”。门吉事也吉，门凶事也凶。", "pair": "戊加乙", "x": "青龙和会，门吉事吉，门凶事也凶。这是一个合格，必有他人他事牵连。遇到好的中间人(门)，事情就吉，反之则凶。测投资代表股份制、合作等。测办事有人帮。测病，多种病。遇到此格，要特别注意门的影响。凶门或吉门门迫，应吉的效果就很不理想。此格利于合作和聚集，不利于一个人独立做事或独立出行。戊加乙，乌云遇到日头，云开雾散。乙是日头，作用在人事上事情明朗，贵人相帮；作用在地理上主清风和煦，鸟语花香；从神助上讲，花点钱敬神——乙奇神咒。"}, {"g": "戊", "d": "丙", "n": "青龙返首", "l": "吉", "t": "即甲子戊在天盘，丙奇在地盘，由于甲木生丙火，丙火又生戊土，丙火是甲木的儿子，是克制庚金的主力，所以在奇门中列为第一吉格，名为“青龙返首”。凡求好事，诸如求婚、求学、求财、求官、出行、出国、建造、出征、打仗等，均大吉大利。但如果“青龙返首”的格局遇上门迫(即门克宫，特别是凶门克宫)、入墓(如甲子戊落乾宫入戌墓)或击刑(如甲子戊落震宫形成子卯刑)，则吉的程度大减，吉事不成，甚至吉事成凶。正因为此格利于好事，所以坏事遇此，反而不吉，如测疾病，遇此格，不仅不吉，反而可能显示病情十分严重。", "pair": "戊加丙", "x": "青龙返首，动作大吉，但若逢门迫、入墓、击刑，则吉事成凶。测投资，投进去的资本又回来了，发财啊。但就怕入墓和击刑：戊落乾宫入墓了，破财；落震宫击刑了，损财；戊落巽宫最吉。门迫不好，主会遇到人事上的变化，戊想回来，但门被锁死了，回不来。此格测疾病——坏了，旧病复发，主反复。测要债，很好，要回来了，但有乱子。打官司，还得重审。测出行，打架妻子失踪了，还会回来。但我遇到多次，去异地卖货，遇此格卖不了，龙返首，货又回来了，但钱却花费了。命盘“青龙返首，鳌头独立”，主金榜题名。测婚姻戊加丙，男方为百里挑一的女婿、女方为华贵娇娘。青龙返首就是往返照耀之意。丙是月亮，开始时是乌云遮月，后来是月出云没。喻人事，开始时挺难的，一片混乱，后来有眉目了，见到光明，事物必有转机。"}, {"g": "戊", "d": "丁", "n": "青龙耀明", "l": "吉", "t": "即甲子戊在天盘，丁奇在地盘，甲木生丁火，丁火生戊土，也是主客相生。故列为第三吉格，名为“青龙耀明”。也是对求取好事，诸如求婚、求学、求官、求财等大吉大利。由于甲子戊为主帅，所以古人讲宜见上级领导、贵人；又由于丁奇主文书、主文明，所以利于求取功名富贵。但是，如果丁奇入墓(如丁奇落艮宫入丑墓)或遇门迫(门克宫，特别是凶门克宫)，则不仅吉的程度大减，甚至会招来是非。", "pair": "戊加丁", "x": "青龙耀明，宜见上级领导、贵人，求功名，为事吉利，若值墓迫，招惹是非。丁主希望、机遇、奇迹，一般说来是好事，但如果一个男的来求测，那他可能外面有女人。测公关，需要动用少女。测病，需要动手术。测运气，主人生有重大机遇。命盘“戊加丁奇，富贵荣耀”。青龙耀明，即闪耀着一点光明，一丝丝的光线，代表希望和奇迹。这个光明也受到外力的影响，门吉则吉，门凶则枉费心机。门吉，一点点光明，再加上人为的助力，则希望加大；门凶，刚有一点希望又被外来因素破坏了。"}, {"g": "戊", "d": "己", "n": "贵人入狱", "l": "凶", "t": "即甲子戊在天盘，甲戌己在地盘。由于天盘戊入地盘戌之墓库，所以名为“贵人入狱”凶格，于公于私都不利。只有等待冲出墓库之时，才能有转机。这是站在天盘甲子戊为贵人的角度讲的。", "pair": "戊加己", "x": "贵人入狱，公私皆不利。己为陷阱，戊为钱，钱掉到陷阱里了，主破财。测投资为合伙投资、各怀鬼胎，钱不到位。己是私欲，想美事。打官司，有好事也实现不了。贵人入狱，测牢狱，出不来。找贵人，此人帮不上忙。逢这种格局，就是能力不足的问题，只有等待冲出墓库之时，才能有转机，一般说来还能挺过去，困难是暂时的。而戊加壬青龙入天牢，却是长久的困惑之象。在人事上，看起来有人帮你这事可行，但贵人的能力不足；又戊为钱，你可能经济实力不行。"}, {"g": "戊", "d": "庚", "n": "值符飞宫", "l": "凶", "t": "即甲子戊加甲申庚。因值符甲最怕庚辛金克杀，天盘值符甲在地盘遇到庚金，自然要躲避，故名为“值符飞宫”格。甲为青龙为吉神，庚为白虎为阻隔凶神，所以测好事不吉，凶事更凶，求财没利益，测病也主凶。惟一的出路，就是值符甲飞离此宫，所以遇此格，又主换地方、换人。", "pair": "戊加庚", "x": "值符飞宫，吉事不吉，凶事更凶，求财没利益，测病也主凶。同时，甲庚相冲，飞宫也主换地方。这是一个动格，肯定动，不会安份的。测工作，肯定要换。临生门，换房子，改生意，换地方。临开门，工作调整。测投资，钱换主人了。开店要迁址，选房子，住不长。测什么，什么都呆不住。经商遇到戊加庚或庚加戊，主此地不比他地，即不能在此地做生意，有时候可以转换门庭就好了。命盘“庚加戊，戊加庚，多成多败，此地不比他地”，必然遇到反复较量的斗争局面，最好是避开对手，换地经营。如果是合作或做事，主不是一路人，你所说的事和他做的事不是一回事，合作不到一块去。测运气，为事业的转成，换行业或换单位。测病，为转移。测坟地，景加戊加庚加腾蛇，不能用，主坟换地方，因景为路，故以后这地方要修路。测什么换什么，代表转移走。"}, {"g": "戊", "d": "辛", "n": "青龙折足", "l": "凶", "t": "即天盘是甲子戊，地盘是甲午辛。由于辛金克甲木，子午又相冲，所以名为“青龙折足”格，吉门有生助，尚能谋事；若逢凶门，主招灾、失财，或有足疾、折伤。这是站在天盘甲的角度讲的。", "pair": "戊加辛", "x": "青龙折足，吉门有生助，尚能谋事；若逢凶门，主招灾，失财或有足疾、折伤。如果是年轻人求测，可能是腿脚上有毛病。测财运，肯定是破财，无论落在哪个宫都是破财，只是落宫不同，破财的形式或者破财的地方不一样。这是一个冲格，干什么都要动，但这个动是错误的。测投资，投错了。测工作，换错地方了。测出行，容易腿脚受伤。测事情，要出问题、夭折、半道折损、半途而废。测怀孕，要防流产。测疾病，为增生类的疾病。冲格，指动态的事情。此格坐不住，也留不住，最忌讳投资，此局做事，就发生不利的变化。作用在人事上，主半途而废或者出现扯后腿的人或意外闪失。遇到戊加辛，开始顺，则以后不顺；开始不顺，则马上要顺利。"}, {"g": "戊", "d": "壬", "n": "青龙入天牢", "l": "凶", "t": "即天盘为甲子戊，地盘为甲辰壬。由于壬为天牢，甲为青龙，子水又入辰墓，故名为“青龙入天牢”凶格。在这里千万不可按字面上的五行生克来看，比如说“戊土克壬水”、“壬水生甲木”，必须按遁甲的特殊关系来看。由于“青龙入天牢”，所以不论公开的事还是隐蔽的事都不利。这也是站在天盘甲子戊为用神的角度讲的。", "pair": "戊加壬", "x": "青龙入天牢，凡阴阳事皆不吉利。此格也主破财，主钱财收不回来，借出的钱，打水漂了。壬水主变化，戊是什么，什么就变化了。投资，亏本。测婚姻、钱财、工作、公司等，都要发生不利的变化。此格也代表运气不好，办不成事，处在一个低潮期。当官的遇此格没好事，要不就是犯错误，要不就是退二线、下台或进去了。青龙代表权位，代表政府官员，壬水牢狱，动了。此格也是一个变动格。测工作，也是要动的。测疾病，病要走了，好事啊。此格表示贵人失陷，小人挡道，被小人牵扯。要注意身边的人或当地地方的人牵扯、陷害。外出求财、做事，受到当地地方势力的欺凌。"}, {"g": "戊", "d": "癸", "n": "青龙华盖", "l": "门定", "t": "即甲子戊加甲寅癸。因甲为青龙，癸为地网，又名华盖，故名为“青龙华盖”格。由于甲与癸一阴一阳，水能生木，又戊与癸相合，所以吉凶由门来定，即逢吉门为吉，可招福临门；逢凶门为凶，事多不成。", "pair": "戊加癸", "x": "青龙华盖，又戊癸相合，故逢吉门为吉，可招福临门；逢凶门，事多不利，为凶。逢合必有勾连、合伙。不仅论天地盘之合，也论天禽星和天芮星所带之干。逢合为多，为合伙。婚姻为不是第一次或表示同居。事情有合绊、障碍。戊看的是癸的性，癸看的是戊的钱。有钱的找性感的女孩，性感的女孩爱嫁有钱的人。戊土也为诚实憨厚的人，赖汉娶娇妻也是戊癸合。戊癸为利而合，也可以说是无情之和。测婚姻，为年龄差距大。测病，为多种病。测出行，必有他人他事牵连、有瓜葛。出行遇到冲格比较好。这个格，有吉有凶。癸为天网，戊为天武。你想做兵戈之事或你想变化，需要通过天网。它既有保护你的意思，也有钳制你的意思。此格中间要有一个媒介即和事佬。门吉则吉，门凶枉费心机。就是说，在外界事物影响推动他的时候，双方有合作的意思；门凶，则说明双方合作没有用，反而互相钳制，大家都干不好。"}, {"g": "乙", "d": "戊", "n": "阴害阳门", "l": "门定", "t": "前边的戊加乙，为甲子戊在天盘为客，乙奇在地盘为主，阳木与阴木会和，由门来决定其吉凶，门吉事也吉，门凶事也凶。现在二者颠倒过来了，乙奇在天盘为客，甲子戊在地盘为主，为客必然主动进攻，这时乙木就会克戊土，故名为“阴害阳门”(戊为阳土为天门，己为阴土为地户)。利于阴人、阴事，不利阳人、阳事，也就是说对女人或隐蔽性的事情有利，对男人或公开性的事情不利。决定吉凶，还是看门。如果门吉，尚可谋为；门凶、门迫，则要破财伤人。", "pair": "乙加戊", "x": "阴害阳门，利于阴人阴事，不利于阳人阳事，就是说不利于公开的事情，利于女人、利于暗中行事。对于男人来讲，如果遇到吉门尚可谋为，门凶、门迫则破财伤人。此局不利于做表面文章。当然，乙加戊，戊为财，测来意等可以看做为财而来啊，或者为合作融资的事情而来等。要是测离婚——这个钱归老婆了（乙木为女人，利阴害阳）。为什么叫阴害阳门？因为戊土为阳门、天门，乙木来克制戊土，起坏作用。遇此格，要看门，门逢凶迫，财破人伤。遇到了这样的格局怎么办？可以委托女人去办；白天不做晚上做。男命遇到这样的局，就不宜主动的去做，要等事情发生以后再出击。"}, {"g": "乙", "d": "乙", "n": "日奇伏吟", "l": "凶", "t": "即乙乙比肩，名为“日奇伏吟”格。不宜见上层领导和贵人，不宜求名求利，只宜安分守己。也就是伏吟利主，宜静不宜动，宜守不宜进。", "pair": "乙加乙", "x": "日奇伏吟，不宜见上级领导、贵人；求名求利及进取事不可求，只宜安分守己。为什么呢？乙木为希望，乙木又主曲折，都是阴干，相互排斥啊，所以这类伏吟，就是曲折更多了。乙是日奇，是太阳，太阳不能有两个。测事，进度不大，拐弯的事情多啊。测婚姻也好不了，就是希望太多了，个个就虚无缥缈。乙多出来一个，那么庚肯定也要多出来一个，所以伏吟主多婚或二婚。测人事方面，这事不是自己一个人干的，因为多出来一个，是与别人合伙的，而且参与人多，伏住了，进展就慢。遇此格，测出行走不了或曲折多发。测出国，走不动，被缠住了。“道路曲折，但并不是前途光明”。逢乙加乙，利主，宜静不宜动，宜守不宜进。"}, {"g": "乙", "d": "丙", "n": "奇仪顺遂", "l": "吉", "t": "天盘为日奇，地盘为月奇，乙木又生丙火，故名为“奇仪顺遂”格，谋事多吉。但在测婚中，乙奇代表妻子，丙奇代表第三者男人，如果乙奇临吉星，说明此人本质好，在官场主客关系处理得好，故能迁宫晋职；如果乙奇临凶星，说明此女本质不好、作风坏，难免与第三者男人搞到一起，故出现夫妻反目离别的情况。", "pair": "乙加丙", "x": "奇仪顺遂，吉星加官尽职，凶星夫妻反目离别。星代表一个人的先天秉性，这个格局是吉还是凶，取决于所临之星是吉星还是凶星。乙木为阴木，丙为阳火——一阴一阳，绝妙搭配。乙委屈，丙火乱子。一个想出头、一个怕出头——二人融合，则奇仪顺遂了。乙加丙，丙为权威啊，就是贵人多的意思，公开做有公开的贵人，暗中做有暗中的贵人。木火通明之象，就是有贵人扶持。但是女人测，特别是摊上凶星，第三者就要来了，这女人作风不好。男人测，则他可能成为第三者。乙加丙有好事，但这个好事是伴着乱子麻烦来的。再次强调，乙加丙，临吉星谋事多吉；临凶星求谋不顺，特别是不利于婚姻。"}, {"g": "乙", "d": "丁", "n": "奇仪相佐", "l": "吉", "t": "即天盘为乙奇，地盘为丁奇，乙木生丁火，故名为“奇仪相佐”吉格，最利文书、考试，百事可为。", "pair": "乙加丁", "x": "奇仪相佐，最利文书、考试，百事可为。为什么？丁主文书、证件、希望、机遇、奇迹，乙也是希望——三奇占了两奇，而丁是希望直达，所以测事会有奇迹发生，有好的机遇。测年运，此年机遇多，希望大，易成功。当然，测婚姻就有第三者了。女人测表示她可能成为别人的第三者。男人测，他有第三者或者老婆不是原配。《奇门遁甲秘笈大全》讲：“丁乙同宫，另续相亲。乙奇在上，妻妾和谐；丁在乙上，妾幸夫心”。遇此格，主有新的机遇，有新的选择。"}, {"g": "乙", "d": "己", "n": "日奇入墓", "l": "门定", "t": "即天盘为乙奇，地盘为甲戌己。由于戌为乙木之墓，故名为“日奇入墓”格，即乙奇被土埋没。如果门凶，事必凶。如果门吉，则有救；得开门则为地遁吉格。", "pair": "乙加己", "x": "日奇入墓，被土暗昧、门凶事必凶。为什么叫日奇入墓？甲戌己啊，乙木入戌墓啊，这样乙奇就发挥不出它的作用了啊。己为坟地、为陷阱，这样是把希望掉到陷阱里了，做什么事情就都不好成功了！乙加己——己是被窝，是私欲，是幻想，就是躺在被窝里想好事，真的让他干，他干不成，也不去干，是空想。遇此格，希望渺茫，也是希望不明确的含义。查病，病因不明。测事，希望渺茫。这个格局与乙加戊不利男人相反，是不利于女性做事，女性去了就倒霉。这个格局适合男性做事、白天做事。遇此格，要看门，门凶事必凶。如果门吉，为有救。遇开门，为地遁吉格。（乙加己遇开门为地遁：利隐蔽企图、建立网点、策划谋为、设计行事。探秘、伏藏、和谈、求贤、交易、婚育吉。）测风水，遇地遁，主坚固稳重。测疾病遇地遁，病潜藏的深，有死亡的可能。"}, {"g": "乙", "d": "庚", "n": "日奇被刑", "l": "凶", "t": "即乙木在上，庚金在下，虽然乙、庚合为夫妻，但阴在上，阳在下，违反常规，庚金刑克乙木，故名为“日奇被刑”格，往往会夫妻不合，为争讼财产，各怀私意。", "pair": "乙加庚", "x": "日奇被刑，为争讼财产，夫妻各怀私意。为什么这样说？虽然乙庚合为夫妻，但阴在上阳在下，违反常规，庚金克乙木，故名日奇被刑。这是一个合格，逢合，就不是一个人干的事情。乙庚虽然在同宫里，但他们的落宫状态不一样，并不是步调一致的。我记这个局——用“同床异梦”来理解。出行逢此格，夫妻同去，不好走，有牵连。测调动，碰到这样的格局，往往也是牵连的事情很多，工作难调。如果女性求测，乙加庚一般是问婚姻上的事情，婚姻上有矛盾。“日奇被刑，庄生嗟叹”，命盘出现这样的格局，对妻子不利。如测恋爱，有可能是同居了。乙加庚测合作，也是各怀鬼胎。强调遇此格，有争讼，各怀私意。"}, {"g": "乙", "d": "辛", "n": "青龙逃走", "l": "凶", "t": "乙在上，辛在下，乙为青龙，辛为白虎，辛金冲克乙木，而且是阴克阴，故名为“青龙逃走”凶格，主家破人亡，财散人走，奴仆拐带，六畜皆伤。在测婚中，遇此格，一般皆为妻子主动提出离婚，离开男方。", "pair": "乙加辛", "x": "青龙逃走，人亡财破，奴仆拐带，六畜皆伤。测婚姻为女逃男。为什么？乙为女人，落到了辛金这个刀子上，能不吓跑吗？辛金主错误，主问题，主变革。乙加辛——测什么事都有问题发生。这是一个动格，不得不动、不能不动啊。两个阴性的相排斥，同性力量大。此局，测婚姻，婚姻要动了，要变革了。测疾病——疾病要跑了，变好事了。测求财，龙逃走，破财了。这也是一个出走的代表符号，如调动、出差等。“青龙逃走，懦弱之人，更主因妻成败，而且驼背驼身”，命盘遇此格，男人必是性格软弱、胆小怕事、没主见、靠老婆支撑家庭、且体矮驼背、相貌丑陋。强调这是一个凶格，百事皆凶，举兵主客皆伤，经商破财，测婚婚散。但我们也注意到乙加辛，如果遇到开休生三吉门之一，则为“云遁”格局，宜于军事、旅游、修炼，宜于求雨。遇云遁，临事也不宜强求，暗中算计对方，对方不易发现。乙加己、乙加辛、丙加戊、丙加庚、丁加壬、丁加癸，再遇地盘值使门就是“三奇得使”吉格。三奇得使它只能是在事物大凶时，稍向好的方向转化，而不至于大凶；在事物大吉时，能锦上添花罢了。测风水乙加辛，房子或院墙有破损的地方。遇云遁，视线开阔。经商遇到乙加辛、辛加乙，合作双方或竞争双方相互不信任。"}, {"g": "乙", "d": "壬", "n": "日奇入天罗", "l": "凶", "t": "乙奇在天盘，甲辰壬在地盘。由于壬为天罗，乙为日奇，故名为“日奇入天罗”凶格，主尊卑悖乱，官讼是非，有人谋害之事。", "pair": "乙加壬", "x": "日奇入天罗，尊卑悖乱，官讼是非，有人谋害之事。为什么？乙木为日奇，壬水是天牢，壬水本来是生乙木的，但是因为它有了牢狱的性质，这样乙加壬就如同坐牢了，能力不好发挥，所以叫尊卑悖乱。像这类情况，我们可以断他背后有小人捣鬼，这个事情要起变化了。因为壬水主流动，此格表示事物还没有定局、还在变化。尊卑悖乱，捣鬼的人可能是他的手下或以前的下属。测婚姻，可能是年龄差距大或差辈等。要点：尊卑悖乱，有人谋害。"}, {"g": "乙", "d": "癸", "n": "日奇入地网", "l": "凶", "t": "乙奇在上，甲寅癸在下。癸水虽生乙木，但癸为地网，故名为“日奇入地网”凶格，宜退不宜进，以躲灾避难为吉。", "pair": "乙加癸", "x": "日奇入地网，宜退不宜进，隐匿藏形，躲灾避难为吉，此格局不利于进攻。为什么？癸水是脏水，是地网。我们现在说网络是癸水的性质之一，也是起于癸水为地网的含义。日奇撞到网里了，不怎么好。测病，病入网了，好不了。测财，财入网就是好事。抓贼，贼入网，跑不了。乙加癸——癸水就是有制约，是出于私欲的破耗，被人拖后腿了。乙加癸，妻子受委屈。测命盘日干遇到乙加癸或癸加乙，此人可能有特异功能。要点——宜退不宜进，不利进攻，躲灾避难为吉。但我们要知道乙加癸遇开休生三吉门或落坎宫为“龙遁”，宜于水战、修桥、凿井。如测凿井，此处必有甘泉。乙加癸临玄武，大雨成灾。"}, {"g": "丙", "d": "戊", "n": "飞鸟跌穴", "l": "吉", "t": "前边的戊加丙，戊为客、丙为主，客生主，主生客，主客相生，对“甲”最有力，所以为第一吉格。现在主客颠倒过来，丙为客、戊为主，甲木生丙火，丙火生戊土，仍是主客相生。主主静，客主动，丙火是甲木的儿子，现在主动回到母亲身边，所以名为“飞鸟跌穴”，列为奇门第二吉格。此格也是对谋好事大吉大利，诸如求婚、求学、求财、求官等，不用费多大力气，就能成功。同样，如果遇上门迫(特别是凶门克宫)、入墓(如丙入乾宫戌墓)或者击刑(如在震宫，地盘甲子戊形成子卯刑)，则吉的程度会大减，甚至吉事不成，反而变凶。另外，此格同“青龙返首”一样，测坏事则不吉。如测疾病，遇此格，不仅显示病重，甚至可能是病人去世入穴的征兆。", "pair": "丙加戊", "x": "飞鸟跌穴，事业可为，可谋大事，对好事大吉大利，如求婚、求财、考试、求官等，不用费多大力气，就能成功。求财遇此格，财来了，到财库了。测病遇此格，麻烦了，病到内部去了，不好去根了。飞鸟跌穴，此格重点在于这个“跌”字，跌，就是跌倒了这里。测什么，跌来了什么。测打官司，要倒霉赔钱了。测出行，有返回之意。测婚姻遇丙加戊、戊加丙，男方为百里挑一的女婿，女方为华贵新娘。注意：此格遇到凶迫（凶门克宫）、墓、击刑，则吉的程度会大减，甚至吉事不成，反而变凶。“财官生旺，盖因飞鸟跌穴”，命盘日干遇此格，必财官两旺、荣华显耀。测风水生门或时干临丙加戊，主住宅雕梁画栋、藏风聚气，是官稳财聚的房子。"}, {"g": "丙", "d": "乙", "n": "日月并行", "l": "吉", "t": "与前边的乙加丙相反，主客关系颠倒过来，丙奇在上，乙奇在下，即阳在上，阴在下，这符合事物一般规律，故名为“日月并行”吉格，公谋私为皆为吉利。", "pair": "丙加乙", "x": "日月并行，公谋私为皆为吉。一个比较剧烈，一个比较消极，事物的协调性就比较好，做事有张有弛的，丙火想出乱子，乙木阴柔的提醒，乙木不敢做的事情，丙火来做，所以说这是个比较好的格局，利于合作、合伙、求谋。"}, {"g": "丙", "d": "丙", "n": "月奇悖师", "l": "凶", "t": "天地盘皆为丙奇，即月奇伏吟，由于丙的性格暴躁，办事容易偏激过火，不守常规，主客二个丙到一起，犹如午午自刑一样，更加重了丙奇的缺点，故名为“月奇悖师”格，主文书逼迫，破耗遗失，特别是容易出现单据票证遗失不明的情况。", "pair": "丙加丙", "x": "月奇悖师，文书逼迫，破耗遗失，主单据、票证不明遗失。此格是火上浇油。丙火就是麻烦乱子，性格暴躁、办事容易偏激过火，丙加丙不就乱套了吗？像热锅上的蚂蚁，乱了方寸。此格虽然乱，但是伏吟，乱也没有好法子的，拖拉难受。因为丙火主文章、票据、单子、凭证，所以遇此格，常常是票据等不明遗失了，做会计工作的应特别注意。此格，凡是过犹不及，要防患于未然。"}, {"g": "丙", "d": "丁", "n": "星奇朱雀", "l": "吉", "t": "天盘为丙，地盘为丁，阳在上，阴在下，丙火又名朱雀，丁为星奇，故名为“星奇朱雀”，二奇阴阳互补，自然为吉，所以主贵人文书吉利，常人平静安乐。如果再逢开、休、生三吉门，则为天遁吉格。", "pair": "丙加丁", "x": "星奇朱雀，贵人文书吉利，常人平静安乐，得三吉门为天遁。此格不错，太阳之火和星星之火到一起比较如意。但测病就不好，丙丁火都是炎症，代表心脏、眼睛、血液，代表手术。丙代表重症，丁代表局部炎症。这玩意要真是测病，麻烦也不小，发烧也能烧死。这格局，如果是女性测情人，这情人还有别的女人。丙加丁或丙加戊与生门同宫为天遁格，丁加休门加太阴为人遁格，遇这两个格，在较长时间内夫妻恩爱、相敬如宾。测风水，临天遁，宅舆高大，遇人遁一团和气。"}, {"g": "丙", "d": "己", "n": "火悖入刑", "l": "门定", "t": "即丙奇在上，下遇甲戌己。因丙火入戌墓，故名为“火悖入刑”格，逢吉门得吉，逢凶门得凶，主囚人刑杖，文书不行。", "pair": "丙加己", "x": "火悖入刑，囚人刑杖，文书不行，吉门得吉，凶门转凶。丙火比较盛烈，己土比较阴柔，它想掉到己土的陷阱里还进不去，己土想缠绕丙火，还缠不住，这种情况进退维谷，比较难受。丙为希望，己土为私欲，背后捣鬼、奸诈，遇到此格临凶门表示表里不一，表面一套、背后一套，表面为人师表，实际男盗女娼，一肚子坏水，是无耻的小人。遇此格，多是因为自私行为和幻想惹出的麻烦，但多数情况下出现的问题是能够解决的。"}, {"g": "丙", "d": "庚", "n": "荧入太白（贼退）", "l": "凶", "t": "天盘为丙奇，地盘为庚。由于丙为朱雀，为荧惑火星，庚为太白金星，故名为“荧入太白”。由于阳火克阳金，二者争战不已，故谋求好事，遇此为大凶格，主门户破败、盗贼耗失、事业难成。但如果测敌人、仇人、贼盗来不来，由于奇门多以庚为敌人、仇人、贼盗的符号，而现在天盘有丙火克制庚金，所谓“火入金乡贼即去”，故又名此格为“贼退”格。敌人、仇人、盗贼退去，这自然为吉了。", "pair": "丙加庚", "x": "荧入太白，贼必去。门户破败，盗贼耗失，事业亦凶。这是个动格，测什么都是动的。测工作，要离职或调动，此人不想干，主动的走。测出行，此人特别想去，你拦也拦不住。如果测求财，一般不是太有利，往往破财，但临生门可以说要出去做生意，不能说是破财。如果测病，此格容易病情好转。此格的要点是一个“去”字，就是主动的去。因为它是个阳干，阳干主主动。谋求好事，遇此格为大凶格。但如果测敌人、仇人、盗贼来不来，遇此格贼退去，自然就是吉利的了。商战中，利主不利客，利退不利进，利于卖货。但测命盘遇“荧入太白者，退，主家业萧条”，是讲日干丙遇此格，如果不积极主动谋事，采取消极退让的态度，则必然破家败财。测风水如果生门时干逢此格，要防火灾破财。"}, {"g": "丙", "d": "辛", "n": "月奇相合", "l": "吉", "t": "丙在上，辛在下。丙火克辛金，丙为月奇为阳，又与阴金辛相合，故名为“月奇相合”吉格。凡谋事能成，测人疾病也不凶。", "pair": "丙加辛", "x": "日月相会，谋事成就，病人不凶。丙辛合是权威之合，相互之间为利益、权势而合作，遇到合格都是拖拖拉拉的事、合作的事，一个人干不了的事。此格是在错误中互相利用，好像局面很乱，实际大局是稳定的。此格虽然合作中会出现一些问题，但这些问题能够解决。利于合作、利于等待，不利于出行。遇此格要看门，格局衰弱、遇凶门，则易犯错误。"}, {"g": "丙", "d": "壬", "n": "火入天罗", "l": "凶", "t": "天盘为丙，地盘为壬。由于壬、丙对冲，壬又为天罗，故名为“火入天罗”凶格，为客不利，是非颇多。", "pair": "丙加壬", "x": "火入天罗，为客不利，是非颇多。壬丙相逢是非多，是一对矛盾。这些麻烦都是因为外部原因导致的，并不是因为自己的失误或错误造成的。这乱子中还有变化，釜底抽薪，越往前进乱子事越多。此格为客不利，则不宜进。"}, {"g": "丙", "d": "癸", "n": "月奇地网", "l": "凶", "t": "天盘为丙奇，地盘为癸水，癸水克丙火，癸在下又名地网，故名为“月奇地网”格，凡事暗昧不明，容易由阴人、小人害事，招来灾祸。", "pair": "丙加癸", "x": "月奇地网，阴人害事，灾祸频生，凡事暗昧不明。指阴人、小人、看不见的人，搞一些破坏性的东西，也是指犯小人，背后有人捣鬼，招来灾祸。遇到这样的格局，要从内部找原因、找身边人是否在捣乱。丙加丁、丙加壬癸临伤门、死门、马星等，煤气管道或自来水管道易泄露。"}, {"g": "丁", "d": "戊", "n": "青龙转光", "l": "吉", "t": "即丁奇在天盘，甲子戊在地盘，与前边的戊加丁相反。但仍是主客相生，所以列为第四吉格，名为“青龙转光”。因甲木生丁火，丁火在上，光明更加显著。所以，诸如求婚、求学、求财、求官等好事会更加顺利。故古人讲遇此格“官人升迁，常人威昌”，也就是说，即使平民百姓遇此吉格，也会事业发达、声名卓著。同样，如果遇到入墓或门迫之时，吉的程度会大减，甚至招来是非。", "pair": "丁加戊", "x": "青龙转光，官人升迁，常人威昌。无论遇到多大困难，将来都会出现转机。开始不好，后来好。诸如求婚、求学、求官等好事会更加顺利。此格如果遇到入墓或凶门门迫其吉利的程度会大减，甚至招来是非。命盘日干丁加戊“青龙转光，邑长县令”，官运好。"}, {"g": "丁", "d": "乙", "n": "玉女奇生", "l": "吉", "t": "与前边的乙加丁相反，主客关系颠倒，仍是相生关系，由于丁为玉女，得到乙奇相生，故名为“玉女奇生”格，贵人加官晋爵，常人婚姻财帛有喜。", "pair": "丁加乙", "x": "人遁吉格，贵人加官进爵，常人婚姻财帛有喜。“丁乙同宫，另续相亲”，乙主曲折变化，丁、乙都是阴干，此格表明事物会有新的变化或者转化。测婚姻，有新的变化，那可能是离婚了，或者在外面有新的女人了。测生意，可能有新的生意或者选择新的合作伙伴。丁奇在天盘，乙奇在地盘，则必然是小妾受到丈夫的宠爱，在家中说了算，此格有焕然一新的新奇感觉。测婚姻不吉，不要老婆了。要注意，实际上此格有点消极，但对于文书、合同方面的事情比较有利。测工作，为要调动、原来的工作不理想或保不住。丁加乙叫人遁吉格。在九遁中还有一个“人遁”，即天盘丁奇加休门加太阴，那个格局，也是谋为吉利。"}, {"g": "丁", "d": "丙", "n": "星随月转", "l": "门定", "t": "与前边的丙加丁相反，主客颠倒，变为阴在上，阳在下，名为“星随月转”。如果是贵人可越级高升，巧妙利用阴阳互补的优势；如果是平常人，往往不能忍受“阴阳颠倒”的状态，反而容易乐里生悲，造成不幸。", "pair": "丁加丙", "x": "星随月转，贵人越级高升，常人乐极生悲，要忍，不然因小的不忍，而引起大的不幸。表示这个事情很难驾驭，星星想支配月亮，那哪行？一个老百姓是享受不了这个福分的。这就是小马拉大车，能力不够，乐极生悲，这事看着挺好，但你如果不是有能力的贵人或有大贵人帮助的人，你驾驭不了，好事就变成坏事了。就是说，我们普通人遇此格，还是要保持冷静、收敛一下为好，不要做过头的事，慎防物极必反，造成不幸。"}, {"g": "丁", "d": "丁", "n": "星奇伏吟", "l": "吉", "t": "名为“星奇伏吟”格。由于丁奇最灵，其他天干伏吟都不吉、不宜动，惟独丁奇伏吟，仍然为吉，主文书证件即至，喜事从心，万事如意。", "pair": "丁加丁", "x": "星奇入太阴，文书证件即至，喜事从心、万事如意。星星之火可以燎原，群星点缀天空。丁加丁也表示幻想太多。测婚姻男朋友或女朋友多。测疾病不吉，有重复多次手术之象。其他格局伏吟，主不宜动，唯独丁奇伏吟，仍然为吉。"}, {"g": "丁", "d": "己", "n": "火入勾陈", "l": "凶", "t": "即天盘丁奇，地盘为甲戌己。由于戌为阳火之库，己(对应地支为丑)为阴火之库，己土又名勾陈，故名为“火入勾陈”格，主有阴私之事，谋求不利，奸私仇冤，事因女人。", "pair": "丁加己", "x": "火入勾陈，奸私仇怨，事因女人。星星掉到井里了，看不到希望了。测事要小心女人或遭到女人、小人、暗中做事之人在背后的捣鬼。看婚姻，可能是男性外面有女人引起了感情不和。遇此格，常常因个人的事情或私人的事情，出现意外或问题。"}, {"g": "丁", "d": "庚", "n": "星奇受阻", "l": "凶", "t": "天盘丁奇，地盘庚，丁为文书，庚为阻隔之神，故名为“星奇受阻”格，庚主文书阻隔、消息不通；但是如果是外出之人或走失之人，遇庚受阻，故又主行人必归。", "pair": "丁加庚", "x": "星奇受阻，文书阻隔，行人必归。测去干事，停滞不前又回到了起点，就是这个事情不太好成，有阻力。测婚姻，有情人，但难以离婚，因为行人必归，又回来了。此格会回到起点上来。遇事，有需要回避或退守之意。测信息，主文书阻隔、消息不通。"}, {"g": "丁", "d": "辛", "n": "朱雀入狱", "l": "凶", "t": "天盘丁奇，地盘甲午辛。甲午辛为罪人，辛又为监狱，故名为“朱雀入狱”格。从地盘罪人辛的角度讲，上遇丁奇，自然为吉，所以主“罪人释囚”；如果从天盘丁奇来讲，丁奇为官人、为贵人，遇到辛这个主错误、主犯罪的符号，也就是说当官的有职权的人犯了错误、有了牢狱之灾，必然要失掉原来的地位，所以又主“官人失位”。", "pair": "丁加辛", "x": "朱雀入狱，罪人失囚，官人失位。这个格表明干事容易犯错误、出现问题。实际上，测领导是在其位不谋其政。丁为希望，辛为错误，希望变成错误了。对于当官的和我们一般的人求事而言，这个格不好，希望被转化了，当官的要下台了。对于已经处于极地的人或地位极低的人，本来就在低谷，一转化反而会好了，失囚倒是好事。测办文凭的事情，遇丁加辛，临玄武的格局，我说你是办假文凭吧，他说是的。我说别办了，你会上当的。他不信，讲是他姐夫的一个大学老师帮助办，关系很硬。我说那也不行。结果他又邀请了其他2个朋友，共缴费5万多去办证。结果那老师跑掉了，打官司都无门。测消息是否属实，景门宫中逢丁加辛，这个格说明消息失位，也不准确。"}, {"g": "丁", "d": "壬", "n": "奇仪相合", "l": "吉", "t": "天盘丁，地盘壬，名为“奇仪相合”格。因丁与壬相合，壬又为天罗，与讼狱有关，所以主凡事有成，贵人辅助，讼狱公平。测婚遇此，因丁壬合为淫荡之合，故多为苟合关系，但也不可一概而论。", "pair": "丁加壬", "x": "奇仪相合，贵人恩诏，诉狱公平。测婚姻多为苟合媾和。逢合格，测出行或者合作都是有牵连。此格测婚姻，未婚先同居，是淫荡之合，表明肉体上的感受比较敏感一些，肉体享受比较多。测合作也非道义的合作，是不正常的合作，将来会出事。但一般说来，这还是吉格，主事情能成，有贵人辅助，讼狱公平。"}, {"g": "丁", "d": "癸", "n": "朱雀投江", "l": "凶", "t": "丁在上，癸在下。丁为阴火，癸为阴水，又为地网，二者又对冲，故名为“朱雀投江”凶格。主文书口舌是非，经官动府，词讼不利，音信沉溺不到。", "pair": "丁加癸", "x": "朱雀投江，文书口舌是非，经官动府、词诉不利，音信沉溺不到。如果测出行坐飞机，可能飞机会出事故。测疾病，要命了。测房事男上女下。测什么都是办事难成，手续办不下来。乘船，翻船。测卖货，主货物卖不出去，再便宜也没人要，还招惹口舌是非。测风水生门时干临此格主家中口舌频多。“朱雀投江，刀笔书吏”，命盘日干临此格可能做法官、调解员。测婚姻，遇丁加癸，主婚后夫妻双方易发生口舌，还要防媒人居心不良。"}, {"g": "己", "d": "戊", "n": "犬遇青龙", "l": "门定", "t": "即甲戌己在天盘，甲子戊在地盘，与前边的戊加己相反。由于戌为犬为狗，甲为青龙，故名为“犬遇青龙”；这也是站在天盘甲戌己角度讲的。因为一般以天盘三奇六仪为用神。“犬遇青龙”格，如果门吉，则谋事可以实现；如果门凶，则枉费心机。这又体现了主客关系的吉凶，主要由八门的吉凶来决定。因八门代表人事。", "pair": "己加戊", "x": "犬遇青龙，戌为犬，甲为龙，故名犬遇青龙。门吉为谋望遂意，上人见喜；若门凶，枉费心机。这体现了主客关系的吉凶，主要由八门的吉凶来决定，因八门代表人事。此格遇吉门，主有贵人帮助，有了施展才华的机遇和新生事物的发生。己土本来是藏在地下的东西，现在放在了阳地上，有人要帮你了，你升值了，做好的肥料了。测投资，有人要给你出资。我理解此格是一人得道鸡犬升天，是个借鸡下蛋沾光揩油的格局。己是明堂，天象是晴空万里；戊是云彩，在地成山。己加戊，事态明朗，叫犬遇青龙。狗骑龙，美是美，得有人帮你。所以门吉则吉，门凶则凶。外界会影响到他俩的组合搭配，是遇到贵人相帮之意。但有时贵人也会变成小人，要看外面的情况。贵人得谗言，就会害你；得贵人美言，就助你。"}, {"g": "己", "d": "乙", "n": "地户逢星", "l": "凶", "t": "甲戌己在上，乙奇在下，与前边的乙加己相反，换了主客关系，一般均以天盘三奇六仪为用神，故站在己的角度，己为地户，乙为日奇，故名为“地户逢星”格，宜遁迹隐形，宜退不宜进。", "pair": "己加乙", "x": "墓神不明，戌为乙木之墓，己又为地户，故名墓神不明，地户逢星，宜遁迹隐形为利。此格不好，庄稼长在了坟地里，长在了井里，长在了地户里，表示这个事不明确。测事，不要去做，你自己都还没有搞清楚。测疾病，不能确诊，只是怀疑。测事，表示这个事还不清楚，没有眉目，只看到了太阳的影子，没有看到太阳。测投资，看不到市场的变化。测前途，前途渺茫，自己搞不清自己的位置。此格，一般做事拖拉，看不见光明，这本身就不是很好的事，没有头绪，却还要去做。这个格局不宜进取。"}, {"g": "己", "d": "丙", "n": "火悖地户", "l": "凶", "t": "与前边的丙加己相反，阴阳颠倒，己在天盘，丙在地盘，戌为火墓，己又名地户，故名为“火悖地户”凶格，如果男人遇此格，容易冤冤相害；女人则易被人奸污。", "pair": "己加丙", "x": "火悖地户，己在天盘，丙在地盘，戌为火墓，己为地户，阴阳颠倒，所以叫火悖地户凶格。如果男人遇此格，容易冤冤相害；女人则易被人奸污。测合作，双方合作不成功，反而遭一些麻烦事、不痛快的事。丙是太阳之火，落到井里了，它不干啊，所以相互攻击。测婚姻：女性测，脚踏两只船，张郎来了想李郎；男性测，到处沾花惹草、寻花问柳。测对手，则乱来，两败俱伤。此格表明会因为不正确的思想和行为，造成一些麻烦事。遇此格，主麻烦是非，由于私心而产生的问题，犯小人，且知道小人是谁。"}, {"g": "己", "d": "丁", "n": "朱雀入墓（地户朱雀）", "l": "门定", "t": "天盘甲戌己，地盘丁奇。因戌、丑为火墓，丁奇为南方火，又名朱雀，故名为“朱雀入墓”，这又是从地盘丁的角度所讲。实际天盘为客，应从天盘角度来讲，不妨改名为“地户朱雀”格，地户遇丁奇毕竟为吉，所以此格主文书词讼，先曲后直，先凶后吉。", "pair": "己加丁", "x": "朱雀入狱，天盘甲戌己，地盘丁奇，因戌、丑都为火墓，丁奇为南方火，又名朱雀，所以叫朱雀入狱。就是丁火落到井里了，但星星是埋不住的，表示开始时有曲折变化，但坚持下去就会有好的机遇。我理解此格，就是道路是曲折的，前途是光明的。经过困难、曲折和磨难之后会有转机，所以此格主文书词讼，先曲后直，先凶后吉。不要冒进，不要急于求成，要缓一步才能成功。"}, {"g": "己", "d": "己", "n": "地户逢鬼", "l": "凶", "t": "天地盘均为甲戌己，己又名地户，故名为“地户逢鬼”凶格。测病遇此格，发凶或必死。求谋好事不成，可暂不谋为，谋为则凶。", "pair": "己加己", "x": "地户逢鬼，病者发凶或必死，百事不遂，暂不谋为，谋为则凶。阴土会阴土，见不得人的勾当，想美事，这个事还成不了。此格主暗中做事，不见阳光，而这个事情做不成功。贪欲太强，自私心重，做事无力，光做美梦。我理解这个格局就是花花肠子一大堆，偷鸡不成蚀把米，聪明反被聪明误。测疾病见鬼了，难好。测出行，路上坑坑洼洼。测人事，到处都是陷阱。"}, {"g": "己", "d": "庚", "n": "刑格返名", "l": "凶", "t": "因为庚加己为刑格，现在主客反过来了，故名为“刑格返名”。庚为阻隔之神，所以不宜谋事，词讼先动者不利，如临阴星则有谋害之可能。", "pair": "己加庚", "x": "刑格返名，词讼先动者不利，如临阴星（凶星）则有谋害之情。庚为阳隔之神，所以不宜谋事。为什么遇阴星有谋害之情？己为阴，本身就是阴谋，再遇阴星这个事情就更不透明了，被人暗中算计了。遇到庚，大多都是刑格，因为庚为天刑，是破坏性的。己加庚，就是破坏平静的气场。遇此格，测事，你不能先动，因为你先做，才出事，你不做则没事。测疾病，多为受伤之意，有时皮肤受伤，有时精神受伤，是难受、别扭、受伤害。遇此格想办的事办不成，那条路走不通，还得回来。"}, {"g": "己", "d": "辛", "n": "游魂入墓", "l": "凶", "t": "即甲戌己加甲午辛。戌为午火之墓。己为地户，辛主罪人，又主骸骨。故名为“游魂入墓”格，主人鬼相侵，住宅易遭阴邪鬼魅作祟，凡事须小心谨慎为妥。", "pair": "己加辛", "x": "游魂入墓，易招阴邪鬼魅作祟。己为地户，戌为午火之墓，辛主罪人，又主骸骨，坟墓里有骨头，主人鬼相亲，住宅易遭阴气。凡事需小心谨慎为妥，这就是两个坏蛋凑到一起了，相互捣鬼，被人捣鬼。如果对方临此格，这是你给人家捣鬼。测房子，不干净，有阴气、有鬼。遇此格，容易上当犯小人，阴人作祟，惊怪之事。用神临此格，就是被小人或被自己不清晰的事情捣鬼或扰乱。这个格局，特别忌讳测房子。测坟地，更需特别注意，如果是还没使用的地时，遇此格说明以前这里有坟；如果是已经安葬的坟墓，遇此格有可能别人要侵占这块地做坟地。古书中讲：遇此格被人借气了。测人事则是犯小人，背后有人整你。"}, {"g": "己", "d": "壬", "n": "地网高张", "l": "凶", "t": "己为地户，壬为天网，己在上，壬在下，故名为“地网高张”凶格。凡事不吉，谋为不利。一阴一阳暗中冲克，己为阴，壬为阳，甲戌己与甲辰壬又有辰、戌相冲，故易出狡童侠女，奸情伤杀之事。", "pair": "己加壬", "x": "地网高张，狡童佚女，奸情伤杀，凡事不吉，谋为不利。一阴一阳暗中冲克，逢冲必动，暗中的私欲要起变化了，没有好事。己壬同宫，天罡与地煞谁也不服谁，表示争斗之事。测什么事都代表要动。壬为天牢，这事难成功，动了也没有好的结果。遇此格，容易犯小人。这也是个冲格。辰为天罡，戌为地煞，起争执、口舌、斗打、狡童佚女、狗叫蛇咬，没好事。"}, {"g": "己", "d": "癸", "n": "地刑玄武", "l": "凶", "t": "甲戌己加甲寅癸。己土克癸水，癸水又在北方玄武之位，故名为“地刑玄武”凶格，主男女疾病垂危，有囚狱词讼之灾。", "pair": "己加癸", "x": "地刑玄武，男女疾病垂危，有囚狱词讼之灾。己土克癸水，癸水又在北方玄武之位，故名地刑玄武凶格。也不是什么好事，癸、己都主有问题。癸主污秽之事，为天网，容易出犯法之事或容易有疾病发生。都是暗地里的事，本身就是不正确的东西，会引起一些问题的发生。测病，为性病。遇此格也主口舌是非，而且容易上当受骗。凡是阴配阴、阳配阳，都不是特别好，但最终体现在地支的刑冲合害上。己为地户、癸为天网，也是暗昧之意。临网必有口舌争讼。"}, {"g": "庚", "d": "戊", "n": "值符伏宫（天乙伏宫）", "l": "凶", "t": "即甲申庚在天盘，甲子戊在地盘，与前边的戊加庚“值符飞宫”格正好相反。也就是说，值符甲在地盘，天盘飞来庚金，如泰山压顶一般，冲克甲不能动弹，故名为“值符伏宫”格，又名为“天乙伏宫”格。这也是站在甲的角度讲的。所以，从甲的角度说，遇到庚金冲克，自然是大凶之格，百事不可为。惟一出路也是换地方、换人。因而古籍在总结人生经验预测中说“庚加戊，戊加庚，多成多败，此地不比他地”。但是，如果用神是天盘庚，不仅不凶，反而为吉，求财(甲子戊为钱财)一定会“多成”，然而由于甲与庚相冲，在甲当令旺相之时，庚金难免被囚，成“多败”之势，所以还是换地方、换人为好。", "pair": "庚加戊", "x": "天乙伏宫，百事不可谋，大凶。唯一出路，也是换地方、换人。古人云：庚加戊、戊加庚，多成多败，此地不比他地。但是如果用神是天盘庚金，不仅不凶，反而为吉，求财一定会多成。然而，由于甲与庚相冲，在甲当令旺相之时，庚金难免被囚，成多败之势，所以还是换地方、换人为好。遇到此格，主客不利，求人不在，等人不来，不是伤人就是伤钱。最怕测合作之事，测合作，准有倒霉事，谁测谁倒霉。因为这是个动格，不完善、不完美。最忌讳坐地求财，开公司、店铺、当口，与伙伴搭档干不到一块去，有小人，分赃不均，因钱的问题打仗，见利忘义。测婚姻逢庚加戊、戊加庚，主夫妻品行不佳，如不讲道理、有外遇、道德品质差等。"}, {"g": "庚", "d": "乙", "n": "太白逢星", "l": "凶", "t": "与前边的乙加庚相反，换了主客关系，故名为“太白逢星”格，由于庚克乙、乙庚又相合，所以为客有利，为主就不利了，只宜退不宜进了。", "pair": "庚加乙", "x": "太白逢星，退吉进凶，谋为不利。为合格，男测女帮，女测男爱。测出行，有勾连之事。测举事，受牵绊，则不宜动。测婚姻，两口子吵架，互不干涉，谁也不管谁。遇此格，主留恋、牵绊，有合伙人，与异性合伙好。男上女下，符合正理。委曲求全，事就好办。命盘遇庚加乙，或乙加庚“太白逢星，妻室常病”，因庚金刑克乙木，妻子身体不好。合格，利于合作，只要你处在委曲求全的状态之下，合作就是愉快的。退而求其次，事就好办。"}, {"g": "庚", "d": "丙", "n": "太白入荧（贼来）", "l": "凶", "t": "即天盘为庚，地盘为丙。天盘为客为动为进，地盘为主为静为守。现在作为敌人、仇人、盗贼、阻隔之神的庚主动进攻来了，虽然丙火能克庚金，但丙火在下，处于不利和被动状态，因而站在甲的角度来讲，这自然是大凶之格。故名为“太白入荧”凶格，又名为“贼来”格。占贼，贼必来，须防敌人来偷营，盗贼入室来抢劫，所以以固守为好。但在实际应用中，如果求测之日干或年命即为庚，庚就是我方，当然此格变为吉格了，必然“为客进利，为主破财”了。只要主动进攻，先发制人，就会有利于自己。", "pair": "庚加丙", "x": "太白入荧，贼必来，为客进利，为主破财。占贼贼必来，需防敌人来偷营，盗贼入室来抢劫，所以要固守为好。但在实际运用中如果求测之日干或年命即为庚，庚就是我方，当然此格就变为吉格了，必然为客进利，为主破财了。只要主动进攻、先发制人，就会有利于自己。测财，财来。临生门会有钱送上门来。女性遇此格，外面必有情人，有男人主动追你。测客人来不来，遇此格客人必来。测官司，官司要来了。测疾病，病来了。测店铺，遇此格再遇玄武，易失窃。测婚姻遇到庚加丙、丙加庚：同床异梦、情感表里不一，常常是三角恋爱或有情人牵连的符号。命盘“太白入荧者，进，主先贫后富”，日干逢此格，只要积极主动去谋事，会先贫后富，逐步改变贫穷的状态，富裕起来。"}, {"g": "庚", "d": "丁", "n": "亭亭之格（金屋藏娇）", "l": "凶", "t": "与前边的丁加庚相反，主客颠倒，庚在上，丁在下。故名为“亭亭之格”，不妨改为“金屋藏娇”格，因庚属阳金，为男人，丁为玉女为情人。故主因私匿或男女关系起官司是非，门吉有救，门凶事必凶。", "pair": "庚加丁", "x": "亭亭之格，因私匿或男女关系起官司是非，门吉有救，门凶事必凶。此格，就是金屋藏娇、包二奶、关系不正常。男性来测，是引诱小姐找三陪去了，有情人。女性来测，主此人是第三者。测事业，主因为一己私利出是非，损公肥私，被人告状了，出事了。命盘“星逢太白，帷薄丑声”，是说命盘遇丁加庚或庚加丁，会出现婚外恋，使家中名声不好。"}, {"g": "庚", "d": "己", "n": "官府刑格", "l": "凶", "t": "庚在上，己在下。名为“官府刑格”，主有官司是非，因官讼被判刑，住牢狱更凶。庚为阻隔之神，为凶的符号，但己为地户为丑为庚之墓地，所以二者相遇，无论为主为客都不吉利。", "pair": "庚加己", "x": "官府刑格，主有官司口舌，因官讼被判刑，住牢狱更凶，百事不利。庚为阳隔、己为地户，为丑土，即庚金的墓地，所以两者相遇无论为主为客都不吉利。刑格就是难受、别扭、心灵或肉体上受到伤害。己为私欲，想暗中伤害。这个难受是不情愿的，是被别人拖累的。测婚姻为婚姻受伤；测合作，为互相伤害，官灾横祸。测身体身体受伤。测什么，什么受伤，什么就起争执。经商破财，出行患病，做事受阻、拧劲。求财遇到刑格和悖格，要尽早撤出，又主企业内部不团结。测婚姻遇到庚加己刑格或者悖格，夫妻双方脾气暴烈，做事不计后果，易发生家庭暴力。"}, {"g": "庚", "d": "庚", "n": "太白同宫（战格）", "l": "凶", "t": "名为“太白同宫”，又名为“战格”。二个凶神相遇，必然相互争斗，所以主同事、朋友或兄弟之间不和，不仅不利谋事，而且还容易招来官灾横祸。", "pair": "庚加庚", "x": "太白同宫，又名战格，官灾横祸。兄弟或同辈朋友相冲撞，意见不一。这个格，伏不住，打仗，仇人相见分外眼红。测工作，遇到此格，肯定动，他坐不安稳的。逢庚就打架、争执、争斗。测合伙，干不成，打的头破血流。测婚姻，两男争女。测求财，竞争激烈。测公司，主内部乱套，内忧外患，要重组了。要注意这个格局却是利客不利主，不利于呆着静守，而是要积极行动、敢于战斗和攻击，才能克敌制胜，谁先动谁有利。命盘庚加庚，主兄弟雷攻，必主客相斗，与兄弟姐妹同事合伙人争斗、相互攻击。冲格，战格。最不利合作，合作必打架。老人测，时干见庚加庚，两儿子打架，不合。"}, {"g": "庚", "d": "辛", "n": "白虎干格（太白刑格）", "l": "凶", "t": "庚辛均为白虎，二者相遇，故名为“白虎干格”。因庚为太白金星，故又名为“太白刑格”。远行不利，诸事有灾殃。", "pair": "庚加辛", "x": "白虎干格，不宜远行，远行车折马伤，求财更为大凶，诸事有灾殃，时间越长越凶。庚辛金都是虎，一山不容二虎。这个格局最怕动，一动就出事。但是，他很少能听进你的话，非动不可。测出行要小心伤灾。办事容易摔跟头。遇此格为主没事，不妨以静待劳观其变。此格，也主打架受伤，因冲动打斗之事。"}, {"g": "庚", "d": "壬", "n": "小格（上格·移荡格）", "l": "凶", "t": "庚加壬名为“小格”，又名为“上格”。壬水主流动，庚为阻隔之神，故主远行迷失道路，音信不通。但如果站在庚的角度，庚若为用神，遇壬水流动，又有变动、变化之意，所以此格又名为“移荡格”。", "pair": "庚加壬", "x": "移荡格，上格又名小格。金化水流，主远行迷失道路，男女音信难通、变动、外出。壬水主流动，庚金为阻隔，故远行道路迷失，男女音信难通。但如果站在庚的角度，庚若为用神，遇壬水流动，又有变动、变化之意，所以叫移荡格。从主客关系来讲，利于客，逢此格必动。测工作，有变动之象，但是一般是岗位的调动、单位内部的调整。测运气，身心不安、劳心劳力，是来回的跑，谈业务的。庚加壬为小格，小在哪里？是指这个变动的范围不大，是本地。此格主忧患，主奔波劳累，不安定、求谋不遂。出行有阻，但堵车堵不住。测婚姻，遇庚加壬、庚加癸：婚后分居，常常配偶一方在家，独守空房，如两地分居或配偶经常出差不回家等，因而也代表鳏寡孤独。若庚处衰地，再逢凶星凶神凶门，则夫妻一方可能早亡，无法白头偕老。测消息是否真实，如果景门遇庚加壬，也为消息不真实。命盘遇庚加壬“小格者，暂时清贫”，如果能审时度势，及时改变自己的处境，经过奋斗也能富裕。"}, {"g": "庚", "d": "癸", "n": "大格", "l": "凶", "t": "庚加癸名为“大格”，因甲申庚与甲寅癸之间寅申相冲相刑，故为大凶之格。庚又为道路，所以多主车祸，行人不至，官讼不息。如果测生育，则可能母子俱伤。", "pair": "庚加癸", "x": "大格，因寅申相冲，庚为道路，故多主车祸，行人不至，官司不止，生育母子俱伤，婚姻易鳏寡孤独。此格为什么主大动？冲的力量大。比如从河南去了广东。大格者，萍迹四海，就是跑到外地去了。如果格局组合好，为去外地创业，到外地发展去了或为高官、为大领导服务的人。若格局衰，是给人打工的。测工作，不是经常出差跑业务的，就是要调动工作了。等人不来，求人不在，经商破财，出行车毁马死，只宜扑捉罪犯。命盘“大格者，萍迹四海”，主一生漂泊不定，四海为家。"}, {"g": "辛", "d": "戊", "n": "困龙被伤", "l": "凶", "t": "与前边的戊加辛相反，主客换了位置，甲午辛在天盘，甲子戊在地盘。故名为“困龙被伤”格，这又是站在甲的角度讲的。因甲在地盘，受到辛金冲克，所以被困受伤，主凶。如果委曲求全、安分守己尚可，妄动则带来祸殃，或吃官司，或破财。但是，如果用神是天盘的辛，那就不仅不凶反而为吉，也可以说“为客无害了”，当然由于子午相冲，挣到手的钱也容易花掉，所以也有不吉的一面。", "pair": "辛加戊", "x": "困龙被伤，主官司破财，屈抑守分尚可，妄动则带来祸殃。但是如果用神是天盘的辛，那就不仅不凶，反而为吉，也可以说为客无害了。当然，由于子午相冲，挣到手的钱，也容易花掉，所以也有不吉的一面。只要辛与戊在一起必破财。测运气，不好，正身陷困境之象，没钱了。测什么事，这个事受伤、受困，不能自拔。此格，为没事找事，妄动必破财，不动就不破财。此格，是因为自己的错误导致的经济危机或事情的失败。注意：庚金一般代表的是外界带来的不良后果与影响；而辛金则是自己内部或因为内因造成的不良影响。"}, {"g": "辛", "d": "乙", "n": "白虎猖狂", "l": "凶", "t": "辛在上，乙在下，辛金主动冲克乙木，故名为“白虎猖狂”凶格，亦主家败人亡，远行多灾殃。测婚时遇此格，一般皆是男人主动离婚，把家拆散。", "pair": "辛加乙", "x": "白虎猖狂，家败人亡（分家、婚散、破产），出行有惊恐，远行多灾殃，尊长不喜，车船俱伤。测婚姻，离散，主因男人，是男人主动离婚，把家拆散。测疾病，病更猖狂了。测求财代表小问题，惹出了大麻烦。但测投资、举事，是可以做的。此格是个动格，利主不利客。修造、交易大凶。命盘遇“白虎猖狂，凶顽之辈”，说明此人凶狠顽固，不是善良人。"}, {"g": "辛", "d": "丙", "n": "干合悖师", "l": "门定", "t": "辛在上，丙在下，与前边的丙加辛相反，阴阳颠倒了，虽然二者仍然相合，但吉的程度就减了，故名为“干合悖师”格，即阴干辛与悖师丙相合。如果门吉则事也吉，门凶则事凶，如果合作求财，容易因财致讼。", "pair": "辛加丙", "x": "干合悖师，荧惑出现，占雨无，占晴旱，占事必因财致讼。门吉则无事；门凶，则事凶。测事，是在合作中出现乱子。本来两个人关系好，是合作伙伴，但后来打官司出现纠纷了。遇此格，只要合作，肯定出口舌官司是非。"}, {"g": "辛", "d": "丁", "n": "狱神得奇", "l": "吉", "t": "天盘为甲午辛，地盘为丁奇，甲午辛为罪人，又名狱神，故名为“狱神得奇”格。如果经商求财，可以获得加倍的利润；办其他事也会有意外的收获；如果犯了错误，也会免予处分，坐牢狱的囚犯，也会获得赦免。", "pair": "辛加丁", "x": "狱神得奇，经商求财获利倍增，囚人逢天赦释免，办其他事，也会有意外的收获。如果犯了错误，也会免于处分。坐牢狱的囚犯，也会获得赦免。此格，不利于婚姻，主第三者插足或是犯错误。辛想犯错误，丁给他纠正。男的是个败家子，女的给他把持，浪子回头金不换。丁有希望、解救之意，遇此格，被绊之事获得释解。乙、丙、丁都是奇，都是希望，但它们的层次是不一样的：临乙，受委屈才能成功；临丙，是乱中取胜；临丁，是直达的希望。"}, {"g": "辛", "d": "己", "n": "入狱自刑", "l": "凶", "t": "天盘为辛，地盘为己。辛为罪人，己为地户为监狱，故名为“入狱自刑”格。主错误由自己造成，奴仆背主，有苦诉讼难伸。", "pair": "辛加己", "x": "入狱自刑，辛为罪人，戌为午火之墓，故为入狱自刑，主奴仆背主，有苦诉讼难伸。就是说遇此格，错误都是因为自己的私欲造成的，是自己找的麻烦事，自酿的苦酒自己喝，有理也难辨。遇此格千万别帮人，帮了变仇人。别与人合作，主心里有苦难言，受委屈却无处发泄。为什么有理难辨？本来他是小人，是毒蛇，是中山狼，可你非去救他，他恩将仇报，是你自己的错误造成的，因此是奴欺主。测坟地风水遇此格，前面有更大的坟山或建筑物离坟头太近了。"}, {"g": "辛", "d": "庚", "n": "天狱自刑（白虎出力）", "l": "凶", "t": "因辛为天狱，遇庚同类相残，故名为“天狱自刑”格，又名为“白虎出力”格。主主客相残，刀刃相见，逊让退步稍可，强进血溅衣衫。", "pair": "辛加庚", "x": "白虎出力，刀刃相交，主客相残，逊让退步则安，强进血溅衣衫。就是两个老虎栓在一起，没好事、主伤灾、斗打。遇此格，宜静不宜动。逢动必出灾。此格不利合作，不利主动去做，越强行去做越倒霉。此格是因自己的错误，引来了外界的影响导致更大的问题发生。"}, {"g": "辛", "d": "辛", "n": "伏吟天庭", "l": "凶", "t": "即甲午辛加甲午辛。由于午午自刑，辛又名天狱、天庭，故名为“伏吟天庭”格，主为事自破，进退不果，公废私就，讼狱自遭罪名。", "pair": "辛加辛", "x": "伏吟天庭，公废私就，讼狱自罹罪名。此格主为事自破，进退不果，是一大堆错误在一起，这些错误都是自己造成的，怨不得别人。主毛病多多、漏洞百出。测罪人，是惯犯、二进宫。"}, {"g": "辛", "d": "壬", "n": "凶蛇入狱", "l": "凶", "t": "因辛为牢狱，壬为凶蛇，故名为“凶蛇入狱”格，主争讼不息，先动失理。又甲辰壬中辰为辛金之墓库，辛在上为客为动，一动必先入辰墓，故为“先动失理”。", "pair": "辛加壬", "x": "凶蛇入狱，因为壬为凶蛇，辛为牢狱，故名。两男争女，一货售两家、讼狱不息，先动失理，利主不利客。此格主犯罪、犯错误。遇此格最容易出现婚外恋、三角恋，而且是被两者同时发现了，引起争斗。壬水主缠绕，多数是两男争一女，多指男女关系引起的口舌是非。如果是女的来测，肯定是脚踩两只船。男的来测，则是破坏人家的家庭。测事，则表示发生三角连锁官司，牵连多人多面，是因为自己的过失，导致的竞争或同时受到了多方面的影响。"}, {"g": "辛", "d": "癸", "n": "天牢华盖（虎投地网）", "l": "凶", "t": "辛为天牢，癸为华盖，故名为“天牢华盖”格，主日月失明，误入天网，动止乖张。辛为白虎，癸为地网，故又名为“虎投地网”格。", "pair": "辛加癸", "x": "天牢华盖，日月失明，误入天网，动止乖张。辛为白虎、癸为地网，此格又叫虎投地网格。遇此格是指走错路了，是自己判断失误造成的。一失足成千古恨，牢狱是非，倒霉事就出来了。遇此格，测生意，不能干，判断失误。"}, {"g": "壬", "d": "戊", "n": "小蛇化龙", "l": "吉", "t": "与前边的戊加壬相反，换了主客关系，即甲辰壬在天盘为客为用神，地盘上是甲子戊，这一颠倒，变成了吉格，故名为“小蛇化龙”格。因壬为小蛇，甲为青龙，也可理解为由五甲甲辰壬变成了一甲元帅甲子戊，升迁发达了。所以主男人发达，女人产婴童。", "pair": "壬加戊", "x": "小蛇化龙，男人发达，女产婴童，做事要防耗散。测企业，企业发展要上新台阶。测事业运气，要转运了。测前途，是提升之象。测疾病不吉，小病要变大病了。此格，利于投资，遇贵人，有人提携帮助你，或者找到了强大的支撑因素。此格，风水好环境好，依山傍水见平川。"}, {"g": "壬", "d": "乙", "n": "小蛇得势", "l": "吉", "t": "与前边的乙加壬相反，颠倒了主客关系，变为阳在上、阴在下，符合一般事物规律，故名为“小蛇得势”格，因甲辰壬为第五甲，可称为一条“小蛇”，得“日奇”乙相助，故名“小蛇得势”。主女人柔顺，男人发达。如果测孕育，可生儿子，有工作有俸禄，出门还有车坐。", "pair": "壬加乙", "x": "小蛇得势，女人柔顺，男人通达。测孕育生子、禄马光华，出门有车坐。是在忧愁之中突然遇到了别人的帮助。遇此格，宜曲中求，不能直截了当的去办，要以柔克刚就好，别急躁。"}, {"g": "壬", "d": "丙", "n": "水蛇入火", "l": "凶", "t": "与前边的丙加壬相反，颠倒了主客关系，但仍然是互相冲克，天盘壬又名“水蛇”，故名为“水蛇入火”格，也为凶格，主官灾刑禁，络绎不绝，两败俱伤。", "pair": "壬加丙", "x": "水蛇入火，因为壬丙相冲克，故主官灾刑禁，络绎不绝，主两败俱伤，为客不利。遇此格，主口舌是非麻烦一大堆，忙中出乱子，越急越出乱子。越想干越乱，为客不利。"}, {"g": "壬", "d": "丁", "n": "干合蛇刑", "l": "门定", "t": "壬在上，丁在下。丁壬相合，壬又为小蛇，故名为“干合蛇刑”格。主文书牵连，贵人匆匆，男吉女凶。因天盘壬为阳为男，遇丁奇相合，自然为吉。而地盘丁为阴为女，上有天罗壬盖头，毕竟不吉。", "pair": "壬加丁", "x": "干合蛇刑，文书牵连，贵人匆匆，男吉女凶。因天盘壬水为阳为男，遇丁奇相合，自然为吉。而地盘丁，为阴为女，上有天罗壬水盖头，毕竟不吉。此格为合格，利于合作、谈判。遇此格，本来是要出乱子的，因为有机遇使乱子平息了。"}, {"g": "壬", "d": "己", "n": "反吟蛇刑", "l": "凶", "t": "壬在上，己在下，甲辰壬与甲戌己辰戌相冲，壬又为蛇，故名为“反吟蛇刑”凶格。主官司败诉，大祸将至，顺守可吉，妄动必凶。", "pair": "壬加己", "x": "反吟蛇刑，主官司败诉，大祸将至，顺守为吉，妄动必凶。己壬相遇斗讼场，壬丙相逢是非多。这是一个动格，是一对冤家，口舌是非，因为想好事，出现的矛盾，闹出的官司。这个局最好不要动，不然容易掉进别人设计的陷阱里、被人陷害。"}, {"g": "壬", "d": "庚", "n": "太白擒蛇", "l": "门定", "t": "因壬为蛇，庚为太白。蛇遇太白被阻，故名为“太白擒蛇”格。凡作为难以进展，但遇词讼，则会刑狱公平，立判邪正。", "pair": "壬加庚", "x": "太白擒蛇，因庚为太白，壬为蛇，故名。主刑狱公平，立判邪正，这是对于词讼之类来讲的。但就有何作为来讲，难以进展，为做事有阻之象。测学习，遇此格，老师有水平，能分清是非。测事也是邪正分明。总体上算是个吉格，是变化中的阻隔，可以融通，虽然有难度，但会发生好的变化。命盘遇此格，做政客、做科研、做教师比较好。一般都有正确的主见，不被其他事物或不利因素所迷惑，能够看清方向。对方临此格，你骗不了人家。如六合临此格，测婚姻或合作，找这样的中介比较好，中立、公正、秉公办事。"}, {"g": "壬", "d": "辛", "n": "螣蛇相缠", "l": "凶", "t": "壬在上，辛在下。辛金入辰墓，辰墓中有壬水，壬为螣蛇，又为天网，罩住辛金，故名为“螣蛇相缠”格，纵得吉门，也不能安宁，若有谋望，被人欺瞒。", "pair": "壬加辛", "x": "螣蛇相缠，纵得吉门，亦不能安。如有谋望，被人欺骗。遇此格，麻烦事一大堆，解决不了，到处都是，内忧外患，没完没了，没有正经事，但很棘手、缠人。测消息，若日干、时干、景门宫中遇到壬加辛格局，说明消息是道听途说、添油加醋、被人欺瞒，不可听信。"}, {"g": "壬", "d": "壬", "n": "天狱自刑（蛇入地罗）", "l": "凶", "t": "即甲辰壬加甲辰壬，壬为天罗，又名天狱，辰辰自刑，故名为“天狱自刑”格。又因壬为蛇，壬又名地罗，故又名为“蛇入地罗”格。主求谋无成，祸患起于内部，诸事主破败，外人缠绕，内事萦索。如果遇吉门吉星，尚可缓解困顿的处境。", "pair": "壬加壬", "x": "天狱自刑或蛇入地罗，壬为天罗又名天狱，辰辰自刑，故名。遇此格，主求谋无成，祸患起于内部，诸事主破败，外人缠绕，内事萦索。如遇吉门吉星，尚可缓解困顿的处境。此格主乱套了，内忧外患，主事因勾连越变越乱，一百个兔子拉车，按下葫芦浮起瓢，乱七八糟，没有秩序的乱。癸加癸，你不动就没事，但壬加壬，不管你动不动，它都找你，难以解决，找不到一个源头和突破口。"}, {"g": "壬", "d": "癸", "n": "天罗逢地网", "l": "凶", "t": "名为“天罗逢地网”格，诸事不利。又阳水在上，阴水在下，二水相遇，阴阳交和，玄武水又主暧昧之事，所以此格又名为“幼女奸淫”格，主有家丑外扬之事发生。如果门吉，尚可谓“风流男女”；如果星凶，说明本质上坏，且本性难改，故必然反福为祸，因男女暧昧之事招来凶灾。", "pair": "壬加癸", "x": "幼女奸淫，主有家丑外扬之事发生。门吉星凶，反福为祸。此格又叫天罗逢地网，诸事不利。因为阳水在上，阴水在下，两水相遇，阴阳交合；玄武水又主暧昧之事，所以此格称为幼女奸淫，主丑事。如果门吉，尚可谓风流男女。如果星凶，说明本质上坏，且本性难改，故必然反福为祸，因男女暧昧之事招来凶灾。"}, {"g": "癸", "d": "戊", "n": "天乙会合", "l": "门定", "t": "与前边的戊加癸相反，颠倒了主客关系。由于子水生寅木，戊与癸合，也就是说主客仍呈相生相合关系，所以名为“天乙会合”格。吉凶仍由门来决定，即逢吉门为吉，宜谋事求财，婚姻喜美，有吉人赞助成合。如逢凶门，或门宫迫制(即门宫相克)，则反而会招来祸害和官司是非。", "pair": "癸加戊", "x": "天乙会合，吉门宜求财，婚姻喜美，吉人赞助成合。若门凶迫制，反祸官非。此格也是个合格，有投资、钱财方面的合作之事。临惊门，合作打官司。遇此格，与他人他事有牵连。"}, {"g": "癸", "d": "乙", "n": "华盖逢星", "l": "门定", "t": "癸在上为客，乙在下为主。癸为地网，但高者可为华盖，故名为“华盖逢星”格，癸虽然多为凶的符号，但现在癸为用神，又得日奇相助，故对癸来说为吉。如果得吉门，则贵人禄位，常人平安；如果得凶门，自然就又凶了。", "pair": "癸加乙", "x": "华盖逢星，贵人禄位，常人平安。癸为地网，但高者可为华盖。癸水虽然多为凶的符号，但现在癸为用神又得日奇相助，故对癸水来说为吉。如果得吉门，则贵人禄位，常人平安；如果得凶门，自然就又凶了。遇此格，性格含蓄，做事内敛好，别太露锋芒，要悄悄的办。此格也主希望被网罩住了，有才难伸。"}, {"g": "癸", "d": "丙", "n": "华盖悖师", "l": "凶", "t": "与前边的丙加癸相反，阴阳颠倒，阴水癸在上，阳火丙在下。癸高者可称“华盖”，丙又为“悖师”，故名为“华盖悖师”格，贵贱逢之皆不利。只有修养高超、能屈能伸、善于因势利导的上等人物才能变不利为有利，反怒为喜。", "pair": "癸加丙", "x": "华盖悖师，贵贱逢之皆不利，唯上人见喜。只有修养高超，能屈能伸，善于因势利导的上等人物才能变不利为有利，反怒为喜。遇此格，易犯小人，忌讳女人参与。遇此格，利主不利客，一动就有乱子事。"}, {"g": "癸", "d": "丁", "n": "螣蛇夭矫", "l": "凶", "t": "癸在上，丁在下。地网阴水遇阴火，癸又名螣蛇，蛇被火烧烤，自然弯曲摆动不已，故名为“螣蛇夭矫”凶格，主文书官司，火焚也逃不掉。", "pair": "癸加丁", "x": "螣蛇夭矫，文书官司，火焚也逃不掉，虚惊不宁。合作必散伙，主口舌官司、争斗。测出行、合作，有是非，非打架不可。乘船、坐车有船翻车毁之险。测病，问题重了。测女人，一母老虎。测男人，不讲理，阴毒小人。测水，水开了。测风水——家宅不宁。测婚姻，是一个吵闹的天干组合。男子预测，妻子絮叨吵嚷；女子预测，丈夫口舌是非多。命盘遇“螣蛇夭矫，毒心小人”，此人心底贪毒。“失时者目盲耳聩，乘气者火焚伤身”，是说命盘遇丁加癸、癸加丁的格局，处死墓绝的状态，前者（丁加癸）眼睛不好，如近视眼、青光眼、失明等；后者（癸加丁）耳朵不好，如耳聋、耳背等；如果格局特别旺相，还要防止火灾、水灾等损伤身体。乙、丙、丁三奇遇到六仪，都为凶中有吉之象，但各有缺陷：丁遇到癸，就完了；丙遇到壬，力量马上消失；乙遇到辛，最凶。这些大凶之格，不能化解。"}, {"g": "癸", "d": "己", "n": "华盖地户", "l": "凶", "t": "与前边的己加癸相反，主客颠倒，癸在上可名华盖，故名为“华盖地户”凶格。男女测之，音信皆阻。此格躲灾避难方为吉。", "pair": "癸加己", "x": "华盖地户，男女测之，音信皆阻，躲灾避难方为吉。这是一个小冲格，不利于客，私欲幻想多。你安静、等待、退守、观看，就没有事，就应吉。但不管做什么事，只要动了，都有不利。纯阴不生，纯阳不长。单相思，办不成。"}, {"g": "癸", "d": "庚", "n": "太白入网", "l": "凶", "t": "癸在上，庚在下。癸又名地网，庚为太白，故名为“太白入网”格。由于寅申相冲相刑，所以凡事无成，吉事也易成空。又主以暴力争讼，自遭罪责。", "pair": "癸加庚", "x": "太白入网，主以暴力争讼，自罹罪责。由于寅申相冲相刑，所以凡事无成，吉事也易成空。遇此格，主打打争斗之事，相冲突，是因冲突、冲动造成的。庚是仇人，逢冲必乱，干什么都有难度，有别人来捣乱、破坏。"}, {"g": "癸", "d": "辛", "n": "网盖天牢", "l": "凶", "t": "癸在上，辛在下。癸为地网，辛为天牢，故名为“网盖天牢”格。主官司败诉，死罪难逃；测病亦大凶。", "pair": "癸加辛", "x": "网盖天牢，主官司败诉，死罪难逃。测病，亦大凶。落巽宫，易出牢狱之灾。遇到六仪击刑，主牢狱或伤灾。小孩遇此格，犯错误，不爱出门。遇此格最好不要动，你不动网就下不来，因此利静不利动。"}, {"g": "癸", "d": "壬", "n": "复见螣蛇", "l": "凶", "t": "癸在上，壬在下，阴阳颠倒。癸、壬均为水蛇，故名为“复见螣蛇”格。主嫁娶重婚，后嫁无子，不保年华。推而广之，主事物变化，另找主人，或另找合作伙伴。", "pair": "癸加壬", "x": "复见螣蛇，癸水、壬水均为水蛇，主嫁娶重婚，后嫁无子，不保年华。遇此格，主此事一再不成功。以前做过这事，现在又去想，但实现不了，表示重复之象，老想不能实现的事，“这张旧船票，还能否登上那条旧船”，涛声依旧，没有结果。"}, {"g": "癸", "d": "癸", "n": "天网四张", "l": "凶", "t": "癸为地网。上边是网，下边也是网，故名为“天网四张”格。天网四张，不可谋事，只宜退避。如果强行谋事，不仅无成，还会带来凶灾。故主行人失伴，病讼皆伤。“天网四张”格，如果落入一、二、三、四宫为网低，受困更重，最好退避忍耐为上，以等待时机。如果落入六、七、八、九宫，为网高，可匍匐而出，故尚可小心谨慎谋事，以逐步改变受困之境遇。", "pair": "癸加癸", "x": "天网四张，主行人失伴，病讼皆伤。天网四张不可谋事，只宜退避。如果强行谋事，不仅无成，还会带来凶灾。古人讲“天网四张不可挡，此时用事有灾殃。若是有人强出者，立便身躯见血光”。又说：如果落入1、2、3、4宫为网低，受困更重，最好退避忍耐为上，以等待时机；如果落6、7、8、9宫为网高，可匍匐而出，故尚可小心谨慎谋事，以逐步改变受困之境遇。遇此格——利静不利动。出行结伴主失散，还容易得病。遇伏吟，不宜动，一动就出事。如果此格临马星或九天，你不让他动，他肯定也动，一动就倒霉，然后他后悔。此格遇到击刑，也主牢狱、伤灾。实践中发现，遇此格，自己独立出行、独立行事，一般没有大问题，就怕多人出行以及合作做事，则必然出问题。庚加庚、癸加癸，一合作就出事。遇到此格，切忌结伴出行，若结伴出行：一是自己生病；二是与同伴失去联系或分道扬镳。二者必应其一。"}];
+var SYMS = {"stem": [{"n": "甲", "tag": "阳木 · 大林木 · 天福（贵人）", "x": "参天之势，性坚质硬，栋梁之材。奇门中称甲为天福、为贵人，代表首领、主要领导人、大人物、将帅，隐遁于六仪之下（甲不单独出现于盘面）。", "r": "人物：体形长方，皮肤青白，筋骨强健，国字脸，浓眉秀发；为人清洁，过于自负，不能娴于事故。", "w": "代表头、胆、肝胆；为十干之首、元帅。", "h": "甲己合化土——中正之合：相互尊敬、婚姻门当户对、相敬如宾；测事多合作多方、重诚守信、正大光明。", "a": "体形长方，皮肤青白，筋骨强健，国字脸，浓眉秀发；为人清洁，过于自负。"}, {"n": "乙", "tag": "阴木 · 花草之木 · 天德（日奇）", "x": "有装扮人间之美，质软柔弱，情满人间。代表希望，主曲折变化、弯曲的事物。", "r": "人物：身材苗条，男子微驼身，皮肤白嫩，骨肉松弛，瘦长脸；性情柔顺，重情仁慈，爱打扮，依附世情。婚姻中代表妻子、女方。", "w": "日奇、女人、妻子、头发、眉毛、耳朵、神经、血管、肠子、肩、胳膊、脖子、手、手指、弯曲的东西、中医中药、月亮、艺术品、小孩、树木、门窗桌椅床、弯曲的河流、蔬菜、花草、蝴蝶、歌女、水果、腰身、茶叶、男性生殖器、输卵管等。", "h": "乙庚合化金——仁义之合：果敢有守、重情讲义；测事多为异性相助、夫妻共勉，测婚多为自由恋爱。", "a": "身材苗条，女子温静苗条，男子微驼身；皮肤白嫩，骨肉松弛，瘦长脸。"}, {"n": "丙", "tag": "阳火 · 太阳之火 · 天威（月奇）", "x": "有光明天地之功，其性刚烈威严，果敢欺霸。主出乱子、权威、炎症。", "r": "人物：体态丰满，圆脸，少胡须，短发，皮肤白里透红；性情刚烈勇猛，不怒自威，工作清廉，能成大材但难持久。婚姻中代表男性第三者、情夫。", "w": "权威之人、病灶浮肿、炎症部位、手肿、牙龈肿、火、太阳、饼、圆形红色之物、悖乱、血液、发烧、心脏、脚、男人、眼睛、欲望、脾气急躁、炮火、烧烤、少男、小肠、红绿灯等。", "h": "丙辛合化水——权威之合：仪表威严、人多畏惧；测事主吉中藏凶、小有过失，测婚多为长辈、他人或媒妁撮合。", "a": "体态丰满，圆脸，少胡须，短发，皮肤白里透红；男子威严、脸红色，女子性急、眼不大。"}, {"n": "丁", "tag": "阴火 · 灯烛之火 · 玉女/星奇", "x": "性质柔弱，有照亮万户之功，为人为己。主希望、机遇、奇迹，希望直达。", "r": "人物：秀丽清高，肤白粉嫩，发细而长，额宽颏尖；性情和顺而有心计，体贴人情，洞察奸邪。婚姻中代表女性第三者、情妇、玉女。", "w": "星奇、红色、花、烟、灯光、女孩、打电话、火、丁有丙之含义、男丁、眼睛、红嘴唇、血、血管、马上达成、希望（丁的希望最好）、高跟鞋、画、樱桃葡萄、肉丁、胸罩、针灸、手术刀、牙齿、牙医、香火、口子、文化、电子产品、幼儿、路口、丁字路口、演员、辣椒、子弹等。", "h": "丁壬合化木——淫荡之合：水性多情易动、风流好色；测婚为苟合，图肉体快感而少真实情感。", "a": "秀丽清高，肤白粉嫩，发细而长，额宽颏尖；男子多为小白脸、秀气有文化。"}, {"n": "戊", "tag": "阳土 · 大地山川之土 · 天武/天门", "x": "性高亢质硬而向阳，生育万物。主资本、钱财、天门。", "r": "人物：形体敦厚，四方脸，皮肤黄白，身体多肉（胖子）；性情果敢豪杰、刚烈暴躁、憨厚或愚笨痴呆、行动迟缓、忠厚有信用。", "w": "资本、钱财、土地、脸、鼻子、胸、乳房、肠胃、脾、屁股、肌肉、肌肤、大地、雾、矿石、大石头、水泥、瓷器、玉器、横梁、屋梁、房子、地质学家、会计、建筑工人、建筑商、金融、黄金、农场、城墙、桥、讲信用、有财源、经济好等。", "h": "戊癸合化火——无情之合：背信弃义、见利忘义；测事多不能长久、因财争执，测婚多为无情夫妻、各尽义务而已。", "a": "形体敦厚，四方脸，皮肤黄白，身体多肉（胖子）；憨厚，或显冒傻气。"}, {"n": "己", "tag": "阴土 · 田园之土 · 明堂（六合）", "x": "有培木溶水之能，性温质软，低洼向阴。主私欲、幻想、坑陷、暗昧。", "r": "人物：形体单薄，瘦弱丑陋，忧愁之相，声音含糊重浊；性情静多动少，温顺沉静。", "w": "坟地、阴沟、低洼之地、小肉、嘴、耳坠、脑子、忠厚老实、朋友多、欲望、消化系统、身体、肚子、肛门、院落、阳台、肚脐附近、大便、肮脏、马桶、垃圾、下水道、地下室、菜园、饭、策划、食物、药丸、餐具、疤痕、弯曲的河流等。", "a": "形体单薄，瘦弱丑陋，忧愁之相，声音含糊重浊；个子矮小、面黄肌瘦。"}, {"n": "庚", "tag": "阳金 · 剑戟之金 · 天狱/天刑", "x": "有刚健肃杀之力，其性刚质硬。为阻隔之神，主凶的符号。", "r": "人物：形体瘦长，骨格健壮，长脸白皮肤，筋强骨健；性情刚健敏锐、有威严、坚忍不拔、能屈人而不屈于人。婚姻中代表丈夫、男方。", "w": "仇人、丈夫、公安干警、道路、皮毛、大肠、骨骼、肺、大腿、阻隔、阻挡、技术、虎、军人、背、打斗、刀、武器、佛、高个子、钢键锐力、收费站、脊骨、关口、黑社会、车祸、石块、墙角、技术过硬、凶猛等。", "a": "形体瘦长，骨格健壮，长脸白皮肤，筋强骨健；个子高、清瘦白晳、长方脸、刚健锐利有威严。"}, {"n": "辛", "tag": "阴金 · 珠玉装饰之金 · 天庭", "x": "性软洁静。主错误、罪人、变革、颗粒、诱惑。", "r": "人物：形体修长方正，皮肤白嫩，长脸凹腮；性情忠诚爽柔，温润秀气，自尊但虚荣，意志稍不坚。男子多曾犯错误或有牢狱之象。", "w": "罪人、错误、革命变革、铁匠、工匠、白色、小石块、手表、斑点、刀具、电子产品、计算器、罪犯、肺、呼吸系统、狱警、金融界、五金制品、首饰珠宝、门窗、骨头、枪、武术、小路、腰、刑具、颗粒状的东西、诱惑。", "a": "形体修长方正，皮肤白嫩，长脸凹腮；瘦高个、体质偏弱、肤色灰白。"}, {"n": "壬", "tag": "阳水 · 江河湖海之水 · 天牢", "x": "通天河而周流不息，性猛而不收，难以回头。主流动、变化、牢狱。", "r": "人物：皮肤稍黑，大眼睛，走路摇摆，长发秀眉；性情柔顺而阴险，勇敢多智，纵欲任性，可共忧患难以同乐。", "w": "不稳定的事物、牢狱、流动、装在什么里就是什么东西、变动、大水、自来水、瀑布、糊涂、迷糊、迷茫、柔性、智慧、动脉、血液、血管、膀胱、风流、船、海边、码头、海港、海军、黑色、怀孕、驾驶员、运输、养殖、海产品、小孩、小偷、眼睛、演员、邮电、道路、鞋子等。", "a": "皮肤稍黑，大眼睛，走路摇摆，长发秀眉；女子美丽、双眼皮可爱。"}, {"n": "癸", "tag": "阴水 · 雨露之水 · 天网", "x": "性发生至静至弱，滋润万物。主暗昧、制约、天网、性。", "r": "人物：矮小黑丑，圆脸瘦肩，声调不高；性情阴柔怕事，多伤感，不能自主。", "w": "性及性生活有关之事、牢狱、小水、淋浴、饮料、眼泪、厕所、洗浴用品、鞋子、头发、油类、鱼缸、下雨、子宫、足、女性用品、困难、肾、神经系统、化妆品、小孩子、酒、色情、静脉、血液等。", "a": "矮小黑丑，圆脸瘦肩，声调不高；偏黑。"}], "star": [{"n": "天蓬星", "tag": "坎一宫 · 水 · 阳星 · 凶星（贼星）· 原名贪狼", "x": "位居北方坎宫，至寒至冷至暗，喜阴害阳，古人认为它与盗贼出没有关，故称凶星、贼星。代表大盗、抢劫犯、杀人犯，又为破财星、贪淫好色之星，如黑恶势力、黑社会。但天蓬又是智慧之星（水主智）：镇守边关的大将、敢于风险投资的大企业家、投机生意人，“富贵险中求”。", "r": "临宫宜修造家居、买房购物、兴作土木工程；余事不利，特别是经商、出行，如临凶格、凶门容易遭盗贼或破财生病。", "w": "测人：胆大妄为、机智过人、皮肤黑、眼睛大。测事：风险投资、水产品、海上物品、贩毒走私、娱乐业、餐饮业、养殖业、不正当行业。代表：好色、聪明、水性、胆大妄为、暗中行事、篷子、头发蓬松、伞状房子、带尖的房子、四面透风的房子、漏房、临水边的房子、色情场所、英雄、醉酒、毛绒绒的、水井、异性亲密行为、爱喝酒的人。", "a": "皮肤黑，眼睛大；个子矮小或身有暗疾。"}, {"n": "天芮星", "tag": "坤二宫 · 土 · 阴星 · 凶星（病星）· 原名巨门", "x": "与八门中死门相对应，古人认为它和疾病有关，称凶星、病星。代表疾病、怀孕母亲、产妇、学生、授业弟子、病人。性阴险毒辣、贪婪无耻；相对吉的一面：医生、救死扶伤医疗机构、农民、一般群众、读书的学生。", "r": "临宫适宜授业师长、交纳朋友、固守；不宜嫁娶、口舌争讼、旅行出游、修造等。", "w": "测人：身患疾病、精神不佳、身体素质较差、学生。测事：出现问题、毛病，事态向坏的方向发展，质量不过关、存在缺陷。代表：出现问题的地方（哪个宫落天芮，哪个宫有问题）、女性、院落、天井、菩萨、医院、学校、结交朋友、走廊、庭院、大地、错误、病人、传授、书、土中之物、斑点、胖子。", "a": "脸黄、腰粗、脸长雀斑；多主疾病缠身、精神不佳。"}, {"n": "天冲星", "tag": "震三宫 · 木 · 阳星 · 次吉星 · 原名禄存", "x": "古人认为它慈心造化、助人为乐，与农事活动有关，故称吉星，但吉的程度较小，又叫次吉之星。代表军人、武警部队、武术爱好者、拳击散打运动员、田径运动员。性急爆、说话直来直去。", "r": "临宫宜于选将出师、鸣金击鼓、争取市场、开拓新事业、任人唯贤、积极宣扬、主动采取行动。", "w": "测人：性子急、工作麻利、为人爽快、敢打敢冲、好出风头、不稳重、好冲动。测事：欠考虑、不顾后果、一时冲动；也表示冲劲、开拓型、雷厉风行、有勇气、积极进取。代表：炸药、雷管、子弹、打老婆的信息、餐厅、大树、电线杆、飞机、大炮、直的东西、开快车、会表演、冲动泼辣、武器飞弹、雷电、木匠、螃蟹、运动员、兔子、武术。", "a": "个子高大直爽、身体长瘦；声音雄壮。"}, {"n": "天辅星", "tag": "巽四宫 · 木 · 阳星 · 大吉星 · 原名文曲", "x": "天上的文曲星，与文化教育事业有关，故称大吉之星。代表文化教育部门、师长、教师、学校、有文化之人，古人把大文豪称作文曲星下界。", "r": "临宫百事皆宜，求财、经商、出行、婚嫁、修造均吉，特别利于升学考试、发展文化教育事业。", "w": "测人：文雅、谦虚、有修养、有文化、有风度、仁慈面善。测事：和谐、融洽、相互谦让、君子之风；求学遇之学业有成。代表：柔弱、母亲胸怀、二把手、爱帮助人、树木、花、草地、隔离带、保护、衣服、中医中药、护士、老师、辅助性工作、林荫道、蔬菜、篱笆、龙卷风、毛发、谦虚、乳房、房子、护佑、庄稼地。", "a": "漂亮含蓄、谈吐不凡、有风度。"}, {"n": "天禽星", "tag": "中五宫（寄坤二宫）· 土 · 阳星 · 大吉星 · 原名廉贞", "x": "土有生育万物之能，中宫是元帅甲子戊值符所在之地，故为大吉之星。有中央戊己土的性质，包容人间万物，中和平稳。", "r": "临宫百事可做，不分四季，四时皆吉。", "w": "测人：忠诚讲信、稳重可靠。测事：贵人扶持、平和、公平、一派正气。", "a": "面方体稳、神态平和（忠厚之相，按性情内推）。"}, {"n": "天心星", "tag": "乾六宫 · 金 · 阴星 · 吉星 · 原名武曲", "x": "在乾宫，乾为天为父为首；能动能静，有领导才能、管理能力，是一个团体的中心人物，长于心计，与军事指挥、医疗治病、造化万物有关，故称吉星。代表领导、管理指挥人员、医生、医药、西医、参谋助手、医卜星相之人。", "r": "临宫利于求仙求药、治病救人、出行、求财、修造、婚嫁，大吉。遇天心星可以主动进攻、考试、治疗疾病、证券投资、做生意、汽车。", "w": "测人：聪明能干、精明有智、乐善好施、攻于心计、阴柔细腻。测事：策划周密、进退自如、管理措施得当、能惩恶助善。代表：做事缜密、有创造性、墙、影壁、玄关、僧人、神佛、蓝天、有心计、有责任心、搬家、除暴安良、会见、永结同心。", "a": "相貌平静美丽；精明有神。"}, {"n": "天柱星", "tag": "兑七宫 · 金 · 阴星 · 凶星 · 原名破军", "x": "正当金秋肃杀之时，喜杀好战，与惊恐怪异、破坏毁折有关，故称凶星。代表检察官、纪检人员、职业军警、教师、律师、娱乐演艺人员、歌手、心直口快、中流砥柱、动嘴的职业。", "r": "临宫不宜远行营谋，商贾行事多不利，有口舌凶危。", "w": "测人：口舌是非、能说会道、好斗争讼；相对吉的一面：能言善辩、顶天立地、力挽狂澜、独当一面、敢于挑战传统旧势力（传说毛泽东日干临天柱星）。测事：有人破坏、是非出现、不依传统处事、弃旧图新。代表：柱子、树、柱状的东西、大腿、能说会道、高大建筑物、筷子、柱状的石头、喇叭、唱歌、电话、说评书、塔、门楼。", "a": "清瘦漂亮、声音清脆响亮；男子胡须粗硬。"}, {"n": "天任星", "tag": "艮八宫 · 土 · 阳星 · 吉星 · 原名左辅", "x": "土能生育万物，又值春天万物萌动之时，故为吉星。代表农民、种植业者、驼背之人、怕妻子、老实人、任劳任怨、没本事。", "r": "临宫宜安抚下属、断决群凶、教化群众部下；宜出行、见贵入谒、婚嫁商贾，四时皆宜，百事可做。", "w": "测人：忠厚老实、任劳任怨、怕老婆、辛苦劳碌。测事：多与田地种植、房产土地有关；经商求财见天任星一般收获不大（性温和忍让、不会投机取巧，不利经商）。代表：田地、台阶、踩踏的东西、丘陵、长寿、老头、老寿星、弹琴、桥、大象、弯腰、爬山、牛、伏案工作、耷拉、火鸡、洗耳恭听、谦虚、负重。", "a": "相貌丑陋或朴实、勤勤恳恳、驼背驼身。"}, {"n": "天英星", "tag": "离九宫 · 火 · 阴星 · 中平（小凶）· 原名右弼", "x": "居南方离宫，烈火炎炎、如日中天大放光明，但又和血光之灾有关，故为中性或小凶之星。代表爆炸易燃物品、家用电器、与火有关的事物或物品。", "r": "临宫宜谋划献策、求朋交友；不宜求财求职、婚嫁出行、修造等事。", "w": "测人：脾气爆燥但讲理、说话大声、脖粗脸红。测事：多与血光有关，经商求财多与电器、火光、易燃物品有关。代表：爆炸性的东西、美丽大方、性子急、红脸、花、夺人眼球、英雄、火、打仗、明亮刺激场所、刺激的东西、耀眼的东西、鸟类、电器、烟火、色彩重的、画、血光。", "a": "漂亮、个子高、短发、皮肤白里透红；脖粗脸红。"}], "gate": [{"n": "开门", "tag": "乾六宫 · 金 · 大吉之门", "x": "乾为天门、八卦之首，乾位有亥水，为资生万物之初，又是甲木长生之地，有万物开始之意，古人称之为大吉之门。代表公门人、公职人员、公司企业、厂矿、工作单位、文官、领导、创业者、店铺门市、法院、法官、检察院、审判庭。", "r": "利于坐地求财、开业经商、出行旅游、升学考试、婚嫁乔迁、建筑贸易、治病求医、庆典赏功、惩恶伐异、谋求大计；举事顺利通畅、官讼得理、寻人得见、利于求名求财、百事称心。", "w": "代表：出行为飞机、家宅为西北门路、开学典礼、开会、开工厂、名人、白领、暴露、开花、开放、张开、警察、开车、开船、开刀、做手术、开洞、开朗、开水、开心、开展工作、开始。", "a": "相貌端正大方、举止开朗，气场外放（按性情内推）。"}, {"n": "休门", "tag": "坎一宫 · 水 · 吉门", "x": "坎宫处冬月最寒冷之季，万物休息冬眠，坎水乃资生万物之源，又是一阳复始的起点，故称吉门。代表休养生息的场所、贵人、有人相助、离退休人员、公职人员、事务工作者、轻闲之人。", "r": "利于求见领导、谒见贵人、托人办事、上官赴任、嫁娶出行、经商建造；不利于急进，不利行刑断狱。", "w": "代表：美容（内部调理，景门的美容是外表涂抹）、睡觉休息、调试调理、脑子、河流、水上运动、死亡、不动、娱乐场所、修理、夜晚、音乐会、电影院、月亮、火车、运输、漂亮的男子、安静场所、休闲服装。", "a": "品貌佳，神态悠然自在。"}, {"n": "生门", "tag": "艮八宫 · 土 · 最吉祥之门", "x": "艮是寅位，“万物回春柄指寅”，三阳开泰，万物复生，因此生门为最吉祥之门。代表生意人、经理、老板、有钱之人、财务人员、房屋建筑、利息利润、活着的人、土地田产、产业。", "r": "利于见官求官、求财经商、嫁娶迁移、出行旅游、修造建屋、房地产开发、种养殖业、田产交易；不利于埋葬治丧、求问阴宅风水。用神临生门财名双利。", "w": "代表：生长、生活、生长生活的强烈愿望、生孩子、钱的含义、利润、生产、动、生机勃勃、哺育、生活场所、房子、生活空间、有人在的地方、希望、家庭美满、财力旺盛、勤恳、山的含义、乳汁。", "a": "体态敦实、神态诚恳（按性情内推）。"}, {"n": "伤门", "tag": "震三宫 · 木 · 凶门", "x": "震卦主动，动则易伤，时值春分，嫩甲发生、元气外泄太过，外华而内虚，极易受伤，故称凶门。代表公安捕盗、讨债人、竞争对手、汽车船只、司机、驾驶员。", "r": "适宜捕捉、索债、赌博、戏耍、收敛财货、渔猎等；不宜出行、经商求财、修造建筑贸易、嫁娶。临伤门只求平安守旧，出行易有伤灾，凡吉利之事临伤门皆不可为。", "w": "代表：身体受伤部位、砸伤、伤心、忧伤、伤感、伤灾、肿块、硬物、难度、阻隔、别人受伤、公检法系统、军队、伤痕、捕猎、船、喜好运动、车祸、骑车人、打架、赌博、收购、挑逗、猎人、火车、斗牛、搏斗、木棒、疤痕、伤人的动物、乐器、勤奋、多动少静、容易对对方造成伤害、性子急、武器、凶器、运动员、逮捕证。", "a": "体格健壮好动，多有伤痕（按门性内推）。"}, {"n": "杜门", "tag": "巽四宫 · 木 · 小凶（中平）", "x": "杜有阻塞之意，东南方为大海，大陆到海边就杜塞不通。代表公检法、保安、部队服役之人、武官、军队、警察、具有保密性质的单位、技术人员、修炼之人、气功师、僧道。", "r": "适宜躲灾避难、捕盗捉贼、防洪筑堤、学习技业、钻研科技；又为阻碍、停滞，测运多为事业有阻、困难重重。", "w": "测病为中风、血栓；测人性格内向、不爱言语；测出行闭塞不通。代表：隐藏、遮盖、掩盖、堵、技术、温度、不爱说话、不情愿、不同意、技术性工作、公检法工作、不高兴、大坝、花草、武术、哑巴、绿地、行走不通、书包、伪装、太阳落山、化妆美容、隔离、面具、隐居、大雪遮盖、技术性的学习性的隐蔽性的东西。", "a": "神态拘谨内敛、不善言语。"}, {"n": "景门", "tag": "离九宫 · 火 · 小吉（多主血光口舌）", "x": "正值夏日景色怡人之时，又烈日难耐，南方一年四季草木繁茂。代表娱乐场所、繁华地带、电影、电视、电话、电子产品、手机、图画、文书、书籍、美容院、酒店、通信设施、起诉书、考卷。", "r": "宜建议献策、选用人才、获取信息、广告、扩大声名、饮酒游乐、朋友聚会；多主血光、口舌、流血事件。", "w": "测人：漂亮爱说、能歌善舞、从事文艺之人。测事：多与血光之灾和婚姻、饮乐有关，与火有关。代表：发热的东西、晚霞、景色的东西、用眼看的东西、饱眼福的东西、刺眼睛、美丽的花、鲜艳的、辩论、景色、演戏、数码、花店、导演。", "a": "美貌漂亮、爱打扮、脸红、有礼貌。"}, {"n": "死门", "tag": "坤二宫 · 土 · 凶门", "x": "正值秋季来临，万物春种秋收、春生秋死，又与艮宫生门相对，故为死门、凶门。代表死人、死尸、地皮、坟墓、疤痕、死肉、锁、屠户、行刑之人、救死扶伤。", "r": "不利吉事，只宜吊死送丧、刑杀征战、捕猎杀牲。", "w": "测病临庚多为癌症、一切不动的东西、雕塑、大地、没人住的地方、活佛、宇宙、子弹、殡葬用品、木偶、死心眼、冷酷的。", "a": "神态沉闷、内向，常面露愁容。"}, {"n": "惊门", "tag": "兑七宫 · 金 · 凶门", "x": "正当秋分、寒露霜降之时，金秋肃杀、草木面临凋蔽，一片惊恐萧瑟之象；兑为泽、为破损、为口舌是非。代表官司口舌是非、诉讼律师、教师、歌星、唱歌、演说、播音员、音响、唱片。", "r": "主争讼、惊恐、担心、犹疑、创伤、官非口舌；适宜斗讼官司、掩捕盗贼、蛊惑乱众、设疑伏兵、赌博游戏，其余事不可为。", "w": "代表：心惊肉跳、心律不齐、担心的事、说的、乐器、喊叫、惊讶、惊叫、吃惊、打架、发声的器物、钟、打电话、纪检监察人员、专家、公安局、法院、教室、军警、冷酷、叫喊、狼嚎、喇叭、辩论、舌战、乐队。", "a": "声音清脆响亮；神态警觉、心神不定。"}], "god": [{"n": "值符", "tag": "中央之土 · 最吉之神（八神之首 · 天乙贵人）", "x": "古籍云“天乙在前，太乙在后”，是最吉之神煞。与地盘值班大将和天盘值班星球相对应。代表领导、顶头上司、贵重高档物品、贵人相助、银行部门。禀中央之土，为贵人之位，能育万物；大将利居其下。性清高厚重，为仙佛、为尊贵。", "r": "测事旺相则为吉庆、诏书、宴会、酒食；休囚则为哭泣、愁闷。", "w": "物：印绶、文章、金银首饰、丝麻布帛、珍宝、谷、鳖；变异则为水木之精、鳞鱼之怪。色黄白，形端方。", "a": "气质高雅不凡、仪态尊贵。"}, {"n": "螣蛇", "tag": "南方之火 · 虚诈之神", "x": "性格虚伪、口舌毒辣，专管惊恐怪异、虚华不实之事。测人主虚伪无有诚信、多猜疑善呻吟之辈，或有佛道仙的信仰。测病易反复转移，或有精灵阴邪之物作怪。", "r": "事：胎产、婚姻、文契、钱货；变异为光怪火烛、惊疑、恶梦缠扰、污秽臭气。色红白，形虚幻。", "w": "物：光亮、丑陋、歪斜破损、花梨、绳、蛇。代表：火光的、变来变去的、心性不定、惊疑扰乱、花里胡哨、眼花缭乱、好打扮、小孩、美女、弯曲的东西、长城、徘徊的东西、烟火、烟雾、转来转去的东西、蜈蚣、灯光、幽灵、恶梦、龙、妖怪、精神有病的人、斑马、虚幻的东西、弯曲的小路、树干、花布、花纹、绳子、网状的衣服、网络、海岸线、彩绘、线、脑电波、演出、缠绕。", "a": "男子水蛇腰，女子身体苗条、清秀；眼神飘忽。"}, {"n": "太阴", "tag": "西方之金 · 荫护之神", "x": "性格阴匿暗昧。所临之方可密谋策划、避难藏兵，善作祯祥吉祥的好事。测人品质优良、正直慷慨、助人为乐，或过于自信或自私。测事件有忧愁、思虑之事。", "r": "物：雕琢金银、羽毛精洁、阴霖露雨冰冻、佛寺、字迹。事：旺相则为喜庆、婚姻、胎产；休囚则为淫乱犹疑、欺诈阴私、口舌诅咒、哭泣、暗谋密约、私通走失。色白，体柔。", "w": "代表：隐藏、周密、有秩序、腋下、隐私的部位、哭泣、暗暗的、雕刻、内衣、看不见的地方、欺诈、少女、收获、首饰、怀孕、阴宅、淫乱、诅咒、金属、当兵。", "a": "神态细腻含蓄、不喜张扬（按性情内推）。"}, {"n": "六合", "tag": "东方之木 · 护卫之神", "x": "性格开朗平和，荐贤不妒，喜做好人说合之事，身份多为贤士、医生、教师、文艺等，专管婚姻交易中介之事。所在之方利于谈判、交易、婚姻嫁娶。能飞腾变化，为人好贤乐善。", "r": "物：光彩。事：旺相则为爵禄荣庆、婚姻和合、胎产；休囚则为娼女、口舌、争财、致疾、胆怯、同谋、求降、勾引。色黄，形光彩。", "w": "代表：众多的、合作、人缘好的、慈善、小孩、能合上的、婚姻、小形的花草、娃娃、搞文字工作的、兔子、树林、花草、竹笋、胎儿、亲吻、怀孕、亲善力很强、母子关系、握手、拥抱、清纯、蔬菜、伞、魔术师、子孙、化妆品、白糖、盐。", "a": "人像极佳、和气可亲。"}, {"n": "白虎", "tag": "西方之金 · 凶煞之神", "x": "性格凶猛好斗，专管兴兵打仗、凶杀打斗、疾病死伤、交通事故等。测人性质威雄、有一定权力、讲义气，从事技术过硬的职业。测事多与公安捕盗、犯罪重病、凶伤孝服有关。禀西方之金为刚猛之神，主兵戈战斗。", "r": "物：金银、刀剑、财帛、鱼鳖蛟龙；失令则为朽铁、瓦石、网罗；变异则为水雹狂风、迅雷害物。事：争讼、疾病、死伤、道路跌伤、流连、遗失。色青白，形锐利。", "w": "代表：技术过硬的、威严的、白色的脸、姓白的名字、凶猛、骨骼、锁、大灰狼、刺猬、武器、石狮子、军人、一切能伤害人的、冰雹、车祸、疾病、仿生武器、女人、关口、恐怖的东西、爆炸、刀剑、石制品、口红、武士、死亡。", "a": "长得白净；面带威严。"}, {"n": "玄武", "tag": "北方之水 · 奸谗小盗之神", "x": "性格爱偷（偷情）喜盗，专管贼盗、逃亡、口舌之事，阴谋诡计、好争斗。测人聪明多智、能言善辩、文艺人才，但也主诚信不高、爱说谎话、虚伪不实。", "r": "物：文章、印信、敕令、服物、鱼蛇、蛋、卤油、酒、伞、碳；变异则为妖魔鬼魅。事：谒官求望；失令则为口舌、啼哭、梦想、离别、惊恐、遗失、逃人、奸邪、色情。色赤黑，性缺。", "w": "代表：稀里糊涂、玄学、不明白、玄晕、黑暗、哭泣、鼠、有好色的信息、演员、会表演的人、玄天色、天的含义、偷情、暧昧、小孩、影子、胎儿、酒鬼、醉鬼、乞讨、怀孕、偷看、穿着少、图片、把事情说得很玄、不切实际、胡说八道、头晕。", "a": "眼神闪烁（按性情内推：聪明多智而欠诚实）。"}, {"n": "九地", "tag": "坤土 · 坚牢之神（万物之母）", "x": "性格柔顺文静、厚德载物，有时过于自私消极、缺乏上进心。测人为医生、农民、老妇、卜卦之人等。为隐晦之神。", "r": "物：子母牛、五谷、布帛、沙石、云物、符录、药饵、旧物。事：模糊忧思、病患、牢狱、暗昧、哭泣、死伤。色黑，形厚有柄。", "w": "代表：稳定的、低洼低矮的、顽固不化的、往下边走、腹部、真要饭的、阴暗的地下室、沉稳。", "a": "个子矮小、沉稳低调。"}, {"n": "九天", "tag": "乾金 · 威悍之神（万物之父）", "x": "性格刚强好动、志向远大，有时好高骛远、不切实际。九天之方利于扬兵布阵、行军打仗、乘飞机出行。测人刚健，身份为长辈、官长、有威望之人。为显扬之神。", "r": "物：马、金玉宝石、剑戟、刀战、槌铃、钱、镜、寒水、铜铁、水果、丝竹、光亮玲珑、旋转活动、有声有足之物。事：谋望、博奕、远行。色赤白，形圆质坚。", "w": "代表：不切实际、很高的地方、理想、思想境界高、天空、天上飞的东西、活泼可爱、宇宙、天涯海角、风车、屁股、贝壳、刚健的男人、高高的大厦、圆形的水果、跳跃的动作、空姐、天堂、理想高远。", "a": "个高大英俊；自视清高、心性不定。"}]};
+var REF = {"xing": "<p><b>天心星</b>：有心计、有能力、心眼多、有责任心、里外一把手、有管理才能、相貌平静美丽。</p><p><b>天蓬星</b>：胆子大、聪明、心狠手黑、敢于冒险、善谋多智、阴险奸诈、不服输、皮肤黑、个矮或身有暗疾。</p><p><b>天任星</b>：老实诚恳、相貌一般、勤勤恳恳、驼背驼身、保守固执、憨厚守信用。</p><p><b>天冲星</b>：个子高大直爽、性子急、果断、声音雄壮、办事麻利、易怒、没耐性、倔强、华而不实。</p><p><b>天辅星</b>：文雅有气质、彬彬有礼、心慈面善、有教养有文化、礼貌待人、漂亮含蓄。</p><p><b>天英星</b>：性情急躁但讲理、脸红、脾气大、聪明好学、易冲动、漂亮、个高、短发。</p><p><b>天芮星</b>：贪婪、双重性格、懦弱固执迟钝、温厚柔顺；多主疾病缠身、脸黄、腰粗、脸长雀斑。</p><p><b>天禽星</b>：忠厚诚实、守信、宽以待人、和气平善、坦诚节俭、气度宏大。</p><p><b>天柱星</b>：能说会道、清瘦漂亮、声音清脆响亮、不愿受人干涉、重情讲义、敢挑战旧势力。</p>", "men": "<p><b>开门</b>：性格开朗大方、为人坦诚、活泼好动、通情达理；有正式工作，或经营门面店铺；重义气、自尊心强。</p><p><b>休门</b>：性格柔顺平静、善算计、追求时尚、多心计；多贵人提携、人缘好、品貌佳、工作轻闲。</p><p><b>生门</b>：前途美好、婚姻美满有希望、家庭经济好；性格笃实诚恳守信用，多为做生意经营之人。</p><p><b>伤门</b>：果断勤勉奋进、有才干直爽、性急、自尊心强；多与车船技术有关，或受过伤害、为婚姻伤过脑筋。</p><p><b>杜门</b>：迟滞堵塞、不情愿、保守、不爱说话、不同意；从事与技术有关的技能职业。</p><p><b>景门</b>：有望成功但多口舌是非；美貌漂亮、爱打扮、口才好、有礼貌、知书达理；职业与美容美发、装饰、书画、文章、电脑画面有关。</p><p><b>死门</b>：不成之象；死心眼、内向、保守固执、心情不好；多有神佛信仰，职业与屠宰、救死扶伤有关。</p><p><b>惊门</b>：内心担心、放心不下、口舌是非；能说会道、声音清脆响亮、热情大方；职业与口有关：教师、律师、歌手、播音员、导游、坐台小姐、经销人员等。</p>", "shen": "<p><b>值符</b>：自身条件好、或做领导、气质高雅不凡、多得贵人帮助。</p><p><b>螣蛇</b>：反复变化、奸诈虚假不实、多变不专一、有隐情、三心两意、暗中有隐私隐瞒。</p><p><b>太阴</b>：心思细腻自私、隐瞒、暗中说合做媒、性情温顺内向、不爱声张。</p><p><b>六合</b>：为人和气、人缘极佳、随大流、平和、没有主见；又主婚姻礼物。</p><p><b>白虎</b>：阻隔破坏、多有伤病灾缠身；也主人长得白净、职业技能过硬。</p><p><b>玄武</b>：欺瞒、口舌巧诈、多为不良之辈；男临之有过偷情偷盗事，女临之偷情、爱不专一。</p><p><b>九地</b>：平稳、没有波澜变化；所临之人多个子矮小。</p><p><b>九天</b>：自视清高、好高骛远、标准过高难实现、心高气傲、心性不定；也主个高英俊。</p>"};
+var GANS = "戊己庚辛壬癸丁丙乙";
+var MENS = ["休门","生门","伤门","杜门","景门","死门","惊门","开门"];
+var STATES = ["天遁","地遁","伏吟","反吟","入墓","击刑","门迫","自刑","吉门","凶门","吉星","凶星","相冲","相合"];
+KE.forEach(function(r){
+  var tags=[];
+  MENS.forEach(function(m){if(r.t.indexOf(m)>=0)tags.push(m)});
+  STATES.forEach(function(s){if(r.t.indexOf(s)>=0&&tags.indexOf(s)<0)tags.push(s)});
+  if(r.x){MENS.forEach(function(m){if(r.x.indexOf(m)>=0&&tags.indexOf(m)<0)tags.push(m)});
+  STATES.forEach(function(s){if(r.x.indexOf(s)>=0&&tags.indexOf(s)<0)tags.push(s)})}
+  r.tags=tags;
+});
+function qa(root,sel){return Array.prototype.slice.call(root.querySelectorAll(sel));}
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function hl(s,q){var e=esc(s);if(!q)return e;var qe=esc(q);return e.split(qe).join("<mark>"+qe+"</mark>")}
+function badge(l){return '<span class="badge b-'+l+'">'+l+'</span>'}
+var filters={};
+function passFilter(r){
+  var ok=true;
+  Object.keys(filters).forEach(function(k){
+    if(!filters[k])return;
+    var t=k.split(":")[0],v=k.split(":")[1];
+    if(t==="l"&&r.l!==v)ok=false;
+    if((t==="m"||t==="s")&&r.tags.indexOf(v)<0)ok=false;
+  });
+  return ok;
+}
+function candidates(q){
+  q=(q||"").trim();var res;
+  if(q.length===0){res=KE.slice();}
+  else if(q.length===1&&GANS.indexOf(q)>=0){res=KE.filter(function(r){return r.g===q});}
+  else if(q.length===2&&GANS.indexOf(q[0])>=0&&GANS.indexOf(q[1])>=0){
+    res=KE.filter(function(r){return r.g===q[0]&&r.d===q[1]});
+    if(res.length===0)res=KE.filter(function(r){return (r.g===q[0]&&r.d===q[1])||(r.g===q[1]&&r.d===q[0])});
+  } else {
+    res=KE.filter(function(r){return r.pair.indexOf(q)>=0||r.n.indexOf(q)>=0||r.t.indexOf(q)>=0||(r.x||"").indexOf(q)>=0||(r.g+r.d)===q;});
+  }
+  return res.filter(passFilter);
+}
+var activeIdx=0,current=[];
+var drop=document.getElementById("drop"),listEl=document.getElementById("list"),
+    detail=document.getElementById("detail"),input=document.getElementById("q"),
+    countEl=document.getElementById("count");
+function renderDrop(){
+  var q=input.value.trim();current=candidates(q);activeIdx=0;
+  if(current.length===0){drop.style.display="none";return;}
+  drop.innerHTML=current.map(function(r,i){
+    return '<div class="it'+(i===activeIdx?' active':'')+'" data-i="'+i+'"><span class="pair">'+r.pair+'</span><span class="gname">'+esc(r.n)+'</span>'+badge(r.l)+'</div>';
+  }).join("");
+  drop.style.display=(document.activeElement===input)?"block":"none";
+  qa(drop,".it").forEach(function(el){
+    el.onmousedown=function(ev){ev.preventDefault();show(current[+el.dataset.i]);drop.style.display="none";};
+  });
+}
+function renderList(){
+  var q=input.value.trim();
+  countEl.textContent="共 "+current.length+" 条"+(q?("（关键词："+q+"）"):"");
+  var ht=document.getElementById("listHeadTxt");if(ht)ht.textContent="克应列表 · 共 "+current.length+" 条";
+  listEl.innerHTML=current.map(function(r){
+    return '<div class="it" data-p="'+r.g+'+'+r.d+'"><span class="pair">'+r.pair+'</span><span class="gname">'+hl(r.n,q)+'</span>'+badge(r.l)+
+      (r.tags.length?('<span style="margin-left:8px;color:#a89e88;font-size:12px">'+r.tags.join(" · ")+'</span>'):'')+'</div>';
+  }).join("");
+  qa(listEl,".it").forEach(function(el){el.onclick=function(){showByPair(el.dataset.p);};});
+}
+function show(r){
+  if(!r){detail.style.display="none";return;}
+  var q=input.value.trim();
+  var recip=KE.filter(function(x){return x.g===r.d&&x.d===r.g&&!(x.g===r.g&&x.d===r.d)})[0];
+  detail.innerHTML='<h2>'+r.pair+'　<span style="color:#6b5d45;font-size:16px">'+esc(r.n)+'</span>'+badge(r.l)+'</h2>'+
+    '<div class="meta">'+(r.tags.length?r.tags.map(function(t){return '<span class="tag" onclick="quickFilter(\''+t+'\')">'+t+'</span>';}).join(""):'<span>（断语中未提及特定门/状态）</span>')+'</div>'+
+    '<div class="txt">'+hl(r.t,q)+'</div>'+
+    (r.x?'<div class="xj">'+hl(r.x,q)+'</div>':'')+
+    (recip?'<div class="recip">主客颠倒对照：<a onclick="showByPair(\''+recip.g+'+'+recip.d+'\')"">'+recip.pair+'（'+esc(recip.n)+'）</a></div>':'');
+  detail.style.display="block";
+}
+function showByPair(p){
+  var g=p.split("+")[0],d=p.split("+")[1];
+  var r=KE.filter(function(x){return x.g===g&&x.d===d})[0];
+  if(r){show(r);detail.scrollIntoView({behavior:"smooth",block:"nearest"});}
+}
+function quickFilter(t){
+  qa(document,".chip").forEach(function(c){
+    if(c.textContent===t&&!c.classList.contains("on"))c.click();
+  });
+}
+function refresh(){renderDrop();renderList();if(current.length)show(current[Math.min(activeIdx,current.length-1)]);else show(null);}
+input.addEventListener("input",refresh);
+input.addEventListener("focus",function(){drop.style.display="block";});
+input.addEventListener("blur",function(){setTimeout(function(){drop.style.display="none";},150);});
+input.addEventListener("keydown",function(e){
+  if(e.key==="ArrowDown"){activeIdx=Math.min(activeIdx+1,current.length-1);renderDrop();e.preventDefault();}
+  else if(e.key==="ArrowUp"){activeIdx=Math.max(activeIdx-1,0);renderDrop();e.preventDefault();}
+  else if(e.key==="Enter"){if(current.length){show(current[activeIdx]);drop.style.display="none";}}
+  else if(e.key==="Escape"){input.value="";refresh();}
+});
+/* ===== 符号库 ===== */
+var CURTAB="ky",CURCAT="stem",CURSYM=0;
+function switchTab(t){
+  CURTAB=t;
+  qa(document,".tab").forEach(function(el){if(el.dataset.t===t){el.classList.add("on");}else{el.classList.remove("on");}});
+  document.getElementById("kybox").style.display=(t==="ky")?"":"none";
+  document.getElementById("symbox").style.display=(t==="ky"||t==="pan")?"none":"block";
+  document.getElementById("panbox").style.display=(t==="pan")?"block":"none";
+  if(t!=="ky"&&t!=="pan"){CURSYM=0;renderSymCat(t);}
+  var bn=qa(document,".bn");
+  for(var bi=0;bi<bn.length;bi++){if(bn[bi].dataset.t===t){bn[bi].classList.add("on");}else{bn[bi].classList.remove("on");}}
+}
+function renderSymCat(cat){
+  CURCAT=cat;
+  var box=document.getElementById("symlist");
+  box.innerHTML=SYMS[cat].map(function(s,i){return '<span class="symbtn'+(i===CURSYM?' on':'')+'" data-i="'+i+'">'+s.n+'</span>';}).join("");
+  qa(box,".symbtn").forEach(function(el){el.onclick=function(){CURSYM=+el.dataset.i;renderSymCat(CURCAT);};});
+  renderSym();
+}
+function renderSym(){
+  var s=SYMS[CURCAT][CURSYM],d=document.getElementById("symdetail");
+  var ref='<details><summary>参考：所测之人临九星看性格 / 临八门看状态 / 临八神看心态（通用）</summary><div class="ref"><b>临九星主性格</b>'+REF.xing+'<b>临八门主状态</b>'+REF.men+'<b>临八神主心态</b>'+REF.shen+'</div></details>';
+  var extra="";
+  if(CURCAT==="star")extra='<div class="sec"><b>补充：</b>九星吉凶：天心、天任、天禽、天辅为四吉星，天冲次吉，天英中平，天蓬、天芮、天柱为凶星。九星旺衰以落宫为主、兼看月令——与我同行即为相，我生之月诚为旺，废于父母休于财，囚于鬼兮真不妄（最多不起作用，绝不会“死”）。</div>';
+  if(CURCAT==="gate")extra='<div class="sec"><b>补充：</b>门在本宫为伏吟，到对冲之宫为反吟；门克宫为门迫——吉门被迫吉不就，凶门被迫事更凶；吉门受克吉不就，凶门受克凶不起。门生宫为和，宫生门为义；注意凶门受生更凶，须结合时令旺相休囚具体分析。</div>';
+  if(CURCAT==="god")extra='<div class="sec"><b>补充：</b>八神是阴性物质，只代表自身信息含义，不按五行生克制化参与吉凶。</div>';
+  d.innerHTML='<h3>'+s.n+' <span style="font-size:14px;color:#8a8378">'+s.tag+'</span></h3>'+
+    '<div class="sec"><b>相貌特征（所临之人）：</b>'+s.a+'</div>'+
+    '<div class="sec"><b>特性：</b>'+s.x+'</div>'+
+    '<div class="sec"><b>临宫/宜忌：</b>'+s.r+'</div>'+
+    '<div class="sec"><b>信息含义（测人·测事·代表物）：</b>'+s.w+'</div>'+
+    (s.h?'<div class="sec"><b>'+(CURCAT==="stem"?"天干合化":"补充")+'：</b>'+s.h+'</div>':'')+extra+ref;
+}
+function closePan(){
+  document.getElementById("panmodal").style.display="none";
+  document.body.style.overflow="";
+  var bn=document.getElementById("bnav");if(bn){bn.style.display="";}
+}
+document.getElementById("pandlg-x").onclick=closePan;
+document.getElementById("panmodal").addEventListener("touchmove",function(e){
+  var pd=document.getElementById("pandetail");
+  if(pd.contains(e.target)){e.stopPropagation();}else{e.preventDefault();}
+},false);
+document.getElementById("panmodal").onclick=function(e){if(e.target===this)closePan();};
+document.addEventListener("keydown",function(e){if(e.key==="Escape")closePan();});
+qa(document,".tab").forEach(function(el){el.onclick=function(){switchTab(el.dataset.t);};});
+qa(document,".bn").forEach(function(el){el.onclick=function(){switchTab(el.dataset.t);};});
+var _listOpen=false;
+function setListOpen(v){
+  _listOpen=v;
+  document.getElementById("count").style.display=v?"":"none";
+  document.getElementById("list").style.display=v?"":"none";
+  document.getElementById("listTri").textContent=v?"▼":"▲";
+}
+document.getElementById("listHead").onclick=function(){setListOpen(!_listOpen);};
+setListOpen(false);
+var TERMS = {"2023": {"小寒": [1, 5], "大寒": [1, 20], "立春": [2, 4], "雨水": [2, 19], "惊蛰": [3, 6], "春分": [3, 21], "清明": [4, 5], "谷雨": [4, 20], "立夏": [5, 6], "小满": [5, 21], "芒种": [6, 6], "夏至": [6, 21], "小暑": [7, 7], "大暑": [7, 23], "立秋": [8, 8], "处暑": [8, 23], "白露": [9, 8], "秋分": [9, 23], "寒露": [10, 8], "霜降": [10, 24], "立冬": [11, 8], "小雪": [11, 22], "大雪": [12, 7], "冬至": [12, 22]}, "2024": {"小寒": [1, 6], "大寒": [1, 20], "立春": [2, 4], "雨水": [2, 19], "惊蛰": [3, 5], "春分": [3, 20], "清明": [4, 4], "谷雨": [4, 19], "立夏": [5, 5], "小满": [5, 20], "芒种": [6, 5], "夏至": [6, 21], "小暑": [7, 6], "大暑": [7, 22], "立秋": [8, 7], "处暑": [8, 22], "白露": [9, 7], "秋分": [9, 22], "寒露": [10, 8], "霜降": [10, 23], "立冬": [11, 7], "小雪": [11, 22], "大雪": [12, 6], "冬至": [12, 21]}, "2025": {"小寒": [1, 5], "大寒": [1, 20], "立春": [2, 3], "雨水": [2, 18], "惊蛰": [3, 5], "春分": [3, 20], "清明": [4, 4], "谷雨": [4, 20], "立夏": [5, 5], "小满": [5, 21], "芒种": [6, 5], "夏至": [6, 21], "小暑": [7, 7], "大暑": [7, 22], "立秋": [8, 7], "处暑": [8, 23], "白露": [9, 7], "秋分": [9, 23], "寒露": [10, 8], "霜降": [10, 23], "立冬": [11, 7], "小雪": [11, 22], "大雪": [12, 7], "冬至": [12, 21]}, "2026": {"小寒": [1, 5], "大寒": [1, 20], "立春": [2, 4], "雨水": [2, 18], "惊蛰": [3, 5], "春分": [3, 20], "清明": [4, 5], "谷雨": [4, 20], "立夏": [5, 5], "小满": [5, 21], "芒种": [6, 5], "夏至": [6, 21], "小暑": [7, 7], "大暑": [7, 23], "立秋": [8, 7], "处暑": [8, 23], "白露": [9, 7], "秋分": [9, 23], "寒露": [10, 8], "霜降": [10, 23], "立冬": [11, 7], "小雪": [11, 22], "大雪": [12, 7], "冬至": [12, 22]}, "2027": {"小寒": [1, 5], "大寒": [1, 20], "立春": [2, 4], "雨水": [2, 19], "惊蛰": [3, 6], "春分": [3, 21], "清明": [4, 5], "谷雨": [4, 20], "立夏": [5, 6], "小满": [5, 21], "芒种": [6, 6], "夏至": [6, 22], "小暑": [7, 7], "大暑": [7, 23], "立秋": [8, 8], "处暑": [8, 23], "白露": [9, 8], "秋分": [9, 23], "寒露": [10, 9], "霜降": [10, 24], "立冬": [11, 8], "小雪": [11, 22], "大雪": [12, 7], "冬至": [12, 22]}, "2028": {"小寒": [1, 6], "大寒": [1, 21], "立春": [2, 4], "雨水": [2, 19], "惊蛰": [3, 5], "春分": [3, 20], "清明": [4, 4], "谷雨": [4, 19], "立夏": [5, 5], "小满": [5, 20], "芒种": [6, 5], "夏至": [6, 21], "小暑": [7, 6], "大暑": [7, 22], "立秋": [8, 7], "处暑": [8, 22], "白露": [9, 7], "秋分": [9, 22], "寒露": [10, 8], "霜降": [10, 22], "立冬": [11, 7], "小雪": [11, 21], "大雪": [12, 6], "冬至": [12, 21]}, "2029": {"小寒": [1, 5], "大寒": [1, 20], "立春": [2, 3], "雨水": [2, 18], "惊蛰": [3, 5], "春分": [3, 20], "清明": [4, 4], "谷雨": [4, 20], "立夏": [5, 5], "小满": [5, 21], "芒种": [6, 5], "夏至": [6, 21], "小暑": [7, 7], "大暑": [7, 22], "立秋": [8, 7], "处暑": [8, 23], "白露": [9, 7], "秋分": [9, 23], "寒露": [10, 8], "霜降": [10, 23], "立冬": [11, 7], "小雪": [11, 22], "大雪": [12, 7], "冬至": [12, 21]}, "2030": {"小寒": [1, 5], "大寒": [1, 20], "立春": [2, 4], "雨水": [2, 18], "惊蛰": [3, 5], "春分": [3, 20], "清明": [4, 5], "谷雨": [4, 20], "立夏": [5, 5], "小满": [5, 21], "芒种": [6, 5], "夏至": [6, 21], "小暑": [7, 7], "大暑": [7, 23], "立秋": [8, 7], "处暑": [8, 23], "白露": [9, 7], "秋分": [9, 23], "寒露": [10, 8], "霜降": [10, 23], "立冬": [11, 7], "小雪": [11, 22], "大雪": [12, 7], "冬至": [12, 22]}, "2031": {"小寒": [1, 5], "大寒": [1, 20], "立春": [2, 3], "雨水": [2, 18], "惊蛰": [3, 5], "春分": [3, 20], "清明": [4, 4], "谷雨": [4, 20], "立夏": [5, 5], "小满": [5, 21], "芒种": [6, 5], "夏至": [6, 21], "小暑": [7, 7], "大暑": [7, 22], "立秋": [8, 7], "处暑": [8, 23], "白露": [9, 7], "秋分": [9, 23], "寒露": [10, 8], "霜降": [10, 23], "立冬": [11, 7], "小雪": [11, 22], "大雪": [12, 7], "冬至": [12, 21]}, "2032": {"小寒": [1, 6], "大寒": [1, 21], "立春": [2, 4], "雨水": [2, 19], "惊蛰": [3, 5], "春分": [3, 20], "清明": [4, 4], "谷雨": [4, 19], "立夏": [5, 5], "小满": [5, 20], "芒种": [6, 5], "夏至": [6, 21], "小暑": [7, 6], "大暑": [7, 22], "立秋": [8, 7], "处暑": [8, 22], "白露": [9, 7], "秋分": [9, 22], "寒露": [10, 8], "霜降": [10, 22], "立冬": [11, 7], "小雪": [11, 21], "大雪": [12, 6], "冬至": [12, 21]}, "2033": {"小寒": [1, 5], "大寒": [1, 20], "立春": [2, 4], "雨水": [2, 18], "惊蛰": [3, 5], "春分": [3, 20], "清明": [4, 5], "谷雨": [4, 20], "立夏": [5, 5], "小满": [5, 21], "芒种": [6, 5], "夏至": [6, 21], "小暑": [7, 7], "大暑": [7, 23], "立秋": [8, 7], "处暑": [8, 23], "白露": [9, 7], "秋分": [9, 23], "寒露": [10, 8], "霜降": [10, 23], "立冬": [11, 7], "小雪": [11, 22], "大雪": [12, 7], "冬至": [12, 22]}, "2034": {"小寒": [1, 5], "大寒": [1, 20], "立春": [2, 4], "雨水": [2, 19], "惊蛰": [3, 6], "春分": [3, 21], "清明": [4, 5], "谷雨": [4, 20], "立夏": [5, 6], "小满": [5, 21], "芒种": [6, 6], "夏至": [6, 21], "小暑": [7, 7], "大暑": [7, 23], "立秋": [8, 8], "处暑": [8, 23], "白露": [9, 8], "秋分": [9, 23], "寒露": [10, 8], "霜降": [10, 24], "立冬": [11, 8], "小雪": [11, 22], "大雪": [12, 7], "冬至": [12, 22]}, "2035": {"小寒": [1, 5], "大寒": [1, 20], "立春": [2, 3], "雨水": [2, 18], "惊蛰": [3, 5], "春分": [3, 20], "清明": [4, 4], "谷雨": [4, 20], "立夏": [5, 5], "小满": [5, 21], "芒种": [6, 5], "夏至": [6, 21], "小暑": [7, 7], "大暑": [7, 22], "立秋": [8, 7], "处暑": [8, 23], "白露": [9, 7], "秋分": [9, 23], "寒露": [10, 8], "霜降": [10, 23], "立冬": [11, 7], "小雪": [11, 22], "大雪": [12, 7], "冬至": [12, 21]}};
+var TORDER=["小寒","大寒","立春","雨水","惊蛰","春分","清明","谷雨","立夏","小满","芒种","夏至","小暑","大暑","立秋","处暑","白露","秋分","寒露","霜降","立冬","小雪","大雪","冬至"];
+var JU={"冬至":[1,7,4],"惊蛰":[1,7,4],"小寒":[2,8,5],"大寒":[3,9,6],"春分":[3,9,6],"立春":[8,5,2],"雨水":[9,6,3],"清明":[4,1,7],"立夏":[4,1,7],"谷雨":[5,2,8],"小满":[5,2,8],"芒种":[6,3,9],"夏至":[9,3,6],"白露":[9,3,6],"小暑":[8,2,5],"大暑":[7,1,4],"秋分":[7,1,4],"立秋":[2,5,8],"处暑":[1,4,7],"寒露":[6,9,3],"立冬":[6,9,3],"霜降":[5,8,2],"小雪":[5,8,2],"大雪":[4,7,1]};
+var STEMS="甲乙丙丁戊己庚辛壬癸",BRS="子丑寅卯辰巳午未申酉戌亥";
+var G60=[];for(var i=0;i<60;i++)G60.push(STEMS[i%10]+BRS[i%12]);
+var RING=[1,8,3,4,9,2,7,6];
+var STARHOME={1:"天蓬星",8:"天任星",3:"天冲星",4:"天辅星",9:"天英星",2:"天芮星",7:"天柱星",6:"天心星",5:"天禽星"};
+var DOORHOME={1:"休门",8:"生门",3:"伤门",4:"杜门",9:"景门",2:"死门",7:"惊门",6:"开门"};
+var GONGNAME={1:"坎一宫",2:"坤二宫",3:"震三宫",4:"巽四宫",5:"中五宫",6:"乾六宫",7:"兑七宫",8:"艮八宫",9:"离九宫"};
+var GONGTRI={1:"坎",2:"坤",3:"震",4:"巽",5:"中",6:"乾",7:"兑",8:"艮",9:"离"};
+var GODS8=["值符","螣蛇","太阴","六合","白虎","玄武","九地","九天"];
+var XUNYI=["戊","己","庚","辛","壬","癸"];
+var KONG=[["戌","亥"],["申","酉"],["午","未"],["辰","巳"],["寅","卯"],["子","丑"]];
+var MASTAR={0:"寅",4:"寅",8:"寅",2:"申",6:"申",10:"申",1:"亥",5:"亥",9:"亥",3:"巳",7:"巳",11:"巳"};
+var PALBR={1:["子"],8:["丑","寅"],3:["卯"],4:["辰","巳"],9:["午"],2:["未","申"],7:["酉"],6:["戌","亥"],5:[]};
+function jdn(y,m,d){var a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045;}
+function gzIndex(y,m,d){var i=(jdn(y,m,d)-jdn(1949,10,1))%60;return i<0?i+60:i;}
+function getTerm(y,m,d){
+  var t=TERMS[String(y)];
+  if(!t)return null;
+  var xh=t["小寒"];
+  if(m<xh[0]||(m===xh[0]&&d<xh[1])){
+    var pt=TERMS[String(y-1)];
+    return pt?{name:"冬至",ti:23}:null;
+  }
+  for(var i=1;i<24;i++){
+    var td=t[TORDER[i]];
+    if(m<td[0]||(m===td[0]&&d<td[1]))return {name:TORDER[i-1],ti:i-1};
+  }
+  return {name:"冬至",ti:23};
+}
+var CSC={
+"甲":{亥:"长生",子:"沐浴",丑:"冠带",寅:"临官",卯:"帝旺",辰:"衰",巳:"病",午:"死",未:"墓",申:"绝",酉:"胎",戌:"养"},
+"乙":{午:"长生",巳:"沐浴",辰:"冠带",卯:"临官",寅:"帝旺",丑:"衰",子:"病",亥:"死",戌:"墓",酉:"绝",申:"胎",未:"养"},
+"丙":{寅:"长生",卯:"沐浴",辰:"冠带",巳:"临官",午:"帝旺",未:"衰",申:"病",酉:"死",戌:"墓",亥:"绝",子:"胎",丑:"养"},
+"丁":{酉:"长生",申:"沐浴",未:"冠带",午:"临官",巳:"帝旺",辰:"衰",卯:"病",寅:"死",丑:"墓",子:"绝",亥:"胎",戌:"养"},
+"戊":{寅:"长生",卯:"沐浴",辰:"冠带",巳:"临官",午:"帝旺",未:"衰",申:"病",酉:"死",戌:"墓",亥:"绝",子:"胎",丑:"养"},
+"己":{酉:"长生",申:"沐浴",未:"冠带",午:"临官",巳:"帝旺",辰:"衰",卯:"病",寅:"死",丑:"墓",子:"绝",亥:"胎",戌:"养"},
+"庚":{巳:"长生",午:"沐浴",未:"冠带",申:"临官",酉:"帝旺",戌:"衰",亥:"病",子:"死",丑:"墓",寅:"绝",卯:"胎",辰:"养"},
+"辛":{子:"长生",亥:"沐浴",戌:"冠带",酉:"临官",申:"帝旺",未:"衰",午:"病",巳:"死",辰:"墓",卯:"绝",寅:"胎",丑:"养"},
+"壬":{申:"长生",酉:"沐浴",戌:"冠带",亥:"临官",子:"帝旺",丑:"衰",寅:"病",卯:"死",辰:"墓",巳:"绝",午:"胎",未:"养"},
+"癸":{卯:"长生",寅:"沐浴",丑:"冠带",子:"临官",亥:"帝旺",戌:"衰",酉:"病",申:"死",未:"墓",午:"绝",巳:"胎",辰:"养"}};
+var PALBC={1:"子",8:"寅",3:"卯",4:"巳",9:"午",2:"申",7:"酉",6:"亥",5:"申"};
+var CSCMEAN={"长生":"新生始发，气运上升","沐浴":"沉迷脆弱，命犯桃花","冠带":"初具规模，万事已备","临官":"成熟兴旺，前景乐观","帝旺":"鼎盛之时，物极防衰","衰":"信心不足，体力不支","病":"隐患已现，问题发生","死":"衰死无生，低谷之时","墓":"入墓收藏，逢冲而发","绝":"气断绝地，无力回天","胎":"怀胎休养，机遇未至","养":"休养生息，蓄力待发"};
+var XXY={
+"戊+戊":"戊为高山厚土，主停滞闭塞；两戊重叠，如山叠山，处处碰壁。人显愚钝固执、不开窍，凡事以守为吉，不可妄进。",
+"戊+乙":"戊为高山云雾，乙为日奇希望。云上见日，云开雾散之象；乙曲戊直，表面受阻而内有生机，得人引荐则吉。",
+"戊+丙":"戊为大地，丙为太阳，日照大地，光明普照。为第一吉格青龙返首，主事情大有转机、去而复返；唯忌入墓击刑，吉处藏凶。",
+"戊+丁":"戊为高岗，丁为灯火希望。山上有灯，光明虽微而显著，主希望显现、贵人指点；文上有喜，唯忌墓迫惹是非。",
+"戊+己":"戊为贵人在天，己为地户陷阱。贵人掉坑里，主有才难施、受人拖累；阳土入阴土，明暗不分，公私皆不利，待冲出墓库方有转机。",
+"戊+庚":"戊为青龙，庚为白虎阻隔。青龙见虎必逃，主动荡迁移；主客皆不安，求财无利，此地不宜久留，宜换地方换人。",
+"戊+辛":"戊为高岗，辛为刀刃错误。岗上藏刀，行路折足；主事情中途夭折、半途而废，凡谋多有闪失，先顺后逆，忌投资动土。",
+"戊+壬":"戊为高山，壬为大水，山被水淹，青龙入牢。主事情被埋没、希望被浇灭，明暗皆不利，处低潮期，防小人牵累。",
+"戊+癸":"戊为老阳，癸为老阴，天地相合，老翁配少妇，无情之合。主因私情利益而合，各取所需；逢门定吉凶，合作中互相牵制。",
+"乙+戊":"乙为日奇花草，戊为高山厚土。花草克山，以柔犯刚，主暗中较劲；利阴人阴事，不利公开竞争，得吉门尚可为，门迫则破财伤人。",
+"乙+乙":"乙为曲折希望，两乙伏吟，如藤蔓缠绕。主拖延反复、好事多磨；日不西沉，伏而不进，宜静守等待，强求无成。",
+"乙+丙":"乙为木，丙为火，木火通明，奇仪顺遂。主贵人扶持、声名渐起；阴木生阳火，柔而得光，唯女命防外遇之嫌。",
+"乙+丁":"乙为木，丁为灯火，木火相生，奇仪相佐。主文书有喜、机遇直达；如灯芯添油，希望可期，考试文书最宜。",
+"乙+己":"乙为日奇，己为墓库陷阱。日奇入墓，明珠埋土；主才华被埋、有志难伸，看不清方向，病因不明，利暗处求谋不利公开。",
+"乙+庚":"乙为木，庚为金，金克木而相合，合中带刑。夫妻同床异梦，各怀私心；主合作先合后争、因财起讼，牵连难断。",
+"乙+辛":"乙为花草，辛为刀错。花草遇刀，青龙被刺伤而逃走；主突生变故、人财两失；婚姻主女方出走，凡事避之则吉。",
+"乙+壬":"乙为日奇，壬为天罗。日奇入网，尊卑悖乱；主好人受冤、被下属拖累，事情未定仍在变化，防小人暗算。",
+"乙+癸":"乙为日奇，癸为地网。日奇入网，光芒被罩；看似有机会实则被缠住，宜退不宜进，以躲灾避难为上。",
+"丙+戊":"丙为太阳，戊为大地，鸟归巢穴，光明归根。主不费力气而得利、求谋顺遂；凡事先难后易，自有转机。",
+"丙+乙":"丙为月奇之光，乙为日奇，日月并行，阴阳相济。主谋为皆利、公私两宜，合作顺畅，刚柔并济之佳局。",
+"丙+丙":"丙为乱子，两丙相叠，火上浇油。主急躁偏激、忙中出错；文书票据易生纰漏，凡事过犹不及，宜冷静缓行。",
+"丙+丁":"丙为太阳，丁为星灯，星月同辉，奇仪相佐。主文书吉利、贵人帮扶；再得吉门则为天遁，谋为大成。",
+"丙+己":"丙火入己土之阱，火悖入刑。主表里不一、明一套暗一套；私欲惹祸，文书受阻，多数可解，宜正不宜邪。",
+"丙+庚":"丙为火，庚为金，火入金乡，贼退之格。利测贼盗退去，不利求财求谋；主门户破败、内里消耗，宜守不宜攻。",
+"丙+辛":"丙为权威，辛为错误，合而制之，日月相会。主在错误中互相利用、乱中有序；合作可成而需防财讼。",
+"丙+壬":"丙为火，壬为水，火入天罗，水灭火光。主是非不断、前进受阻；为客不利，宜守成静待风波自息。",
+"丙+癸":"丙为月奇，癸为地网。月入网中，光华被掩；主小人暗中作梗、事情暧昧不明；灾祸从暗处来，宜明察防内鬼。",
+"丁+戊":"丁为希望，戊为高山，青龙转光，山巅见光。主绝境逢生、柳暗花明；先难后易，平人亦可威昌。",
+"丁+乙":"丁为玉女，乙为日奇，两奇相佐，玉女得生。主人际和合、喜事临门；文书婚姻皆利，唯嫌稍有消极。",
+"丁+丙":"丁为星，丙为月，星随月转，阴盛阳微。主角色颠倒、名不副实；常人乐极生悲，宜守分知止。",
+"丁+丁":"丁为星火，两丁汇聚，群星灿烂。主文书即至、喜事随心；伏吟不动而吉，静待佳音。",
+"丁+己":"丁为火，己为勾陈陷阱，火入勾陈，星落井中。主因女人起私怨、暗中生事；事因私欲，防隐私曝光。",
+"丁+庚":"丁为文书，庚为阻隔，文书受阻，音信不通。主消息被卡、行人被挡；唯测行人主必归，阻极而返。",
+"丁+辛":"丁为朱雀，辛为牢狱，朱雀入狱。主错误败露、丢职罢官；唯囚人得赦，吉凶随用神而转。",
+"丁+壬":"丁为玉女，壬为天罗，丁壬相合，淫荡之合。主苟合私情、合作暧昧；事虽可成，名不正言不顺，防后续纠葛。",
+"丁+癸":"丁为朱雀，癸为江湖，朱雀投江，文书沉没。主口舌官非、音信全无；忌远行坐船，防小人谗言。",
+"己+戊":"己为地户，戊为青龙，犬遇青龙，借势升天。主得人提携、沾光得势；吉门则谋望遂意，凶门则枉费心机。",
+"己+乙":"己为坟墓陷阱，乙为日奇，星入墓中，光明被掩。主事情不明、方向不清；宜隐居守静，不宜进取。",
+"己+丙":"己为地户，丙为太阳，火落陷阱，太阳入井。主阴阳颠倒、男女多欲；易遭暗害与口舌，防人之心不可无。",
+"己+丁":"己为坑，丁为星，星落坑中而星光难掩。主先曲后直、先难后易；坚持则转吉，文书词讼终得直。",
+"己+己":"己为私欲，两己相叠，泥潭深陷，鬼魅丛生。主暗中使坏、聪明反被聪明误；百事不遂，唯静守可免祸。",
+"己+庚":"己为阴谋，庚为刑杀，阴谋遇刑，暗事败露。主词讼不利、先动者失理；防暗中谋害，宜后动观望。",
+"己+辛":"己为坟土，辛为骸骨，游魂入墓，鬼魅作祟。主住宅不安、阴人作祟；凡事谨慎，防被骗上当犯小人。",
+"己+壬":"己为地户，壬为天牢，地网高张，狡童佚女。主暗中争斗、桃色是非；私欲引祸，宜守不宜动。",
+"己+癸":"己为土，癸为污水，地刑玄武。主男女疾病、牢狱词讼；暗中之事易惹官非，防上当受骗。",
+"庚+戊":"庚为白虎，戊为青龙，虎压青龙，泰山压顶。主百事不宜、处处受制；唯换地换人可解，主客俱伤。",
+"庚+乙":"庚为金，乙为木，金克木而合，太白逢星。主以强凌弱、委曲求全；男测女帮、女测男爱，退则吉进则凶。",
+"庚+丙":"庚为贼，丙为乱，贼必来，大乱之象。主外敌入侵、主动来扰；客有利而主破财，宜固守先发制人。",
+"庚+丁":"庚为男，丁为玉女，亭亭之格，金屋藏娇。主因私情生官非；门吉有救，门凶必咎，防隐私败露。",
+"庚+己":"庚为刑，己为狱，官府刑狱，罪上加罪。主官司牢狱、被牵连拖累；百事不宜，凡事受阻拧劲。",
+"庚+庚":"庚为白虎，两虎相斗，战格相冲，兄弟反目。主竞争激烈、内讧不断；利客不利主，宜主动出击，忌合伙。",
+"庚+辛":"庚辛皆虎，白虎干格，刀剑相交，远行大忌。主伤灾血光、诸事有殃；时间越长越凶，以静制动为上。",
+"庚+壬":"庚为阻隔，壬为流动，移荡之格，水流金行。主远行走失、音信不通；动荡不定，宜守防迷路。",
+"庚+癸":"庚为道路，癸为地网，大格相冲，车毁马死。主车祸行人不至、官讼不止；生育防母子俱伤，唯宜捕盗。",
+"辛+戊":"辛为金，戊为高山，金埋山下，困龙被伤。主受困破财、有志难伸；守分尚可，妄动招祸，客无害主有伤。",
+"辛+乙":"辛为刀，乙为木，白虎猖狂，刀砍花草。主家败人亡、男主动离婚；凶顽之象，凡事避让为上。",
+"辛+丙":"辛为错，丙为乱，干合悖师，合作生乱。主先好后讼、因财致讼；凡合作必生口舌，防利尽而争。",
+"辛+丁":"辛为狱神，丁为奇，狱神得奇，囚逢天赦。主求财倍利、出错得免；阴人相助，意外之喜。",
+"辛+己":"辛为罪人，己为牢狱，入狱自刑，奴仆背主。主自找麻烦、恩将仇报；帮人生怨，合伙必悔，有苦难诉。",
+"辛+庚":"辛为狱，庚为刀，两强相残，刀刃相接。主客相残、逊让稍安；强进血溅衣衫，凡事退一步海阔天空。",
+"辛+辛":"辛为天狱，两辛伏吟，天庭自刑，错误成堆。主漏洞百出、自食其果；惯犯二进宫，凡事自我检讨。",
+"辛+壬":"辛为牢，壬为蛇，凶蛇入狱，两男争女。主讼狱不息、感情纠缠；因过失而陷多角纷争，先动者失理。",
+"辛+癸":"辛为虎，癸为网，虎投地网，误入天网。主判断失误、一失足成千古恨；生意不可做，防牢狱是非。",
+"壬+戊":"壬为小蛇，戊为青龙，蛇化成龙，升迁发达。主男人发达、女人产子；由小变大，贵人提携，风水环抱。",
+"壬+乙":"壬为水，乙为木，水涵花草，小蛇得势。主柔顺有得、以柔克刚；忧愁中得人扶助，出行有车马之喜。",
+"壬+丙":"壬为水，丙为火，水蛇入火，两败俱伤。主官灾刑禁、麻烦不断；客方不利，越急越乱，宜缓不宜急。",
+"壬+丁":"壬为蛇，丁为玉女，干合蛇刑，男吉女凶。主文书牵连、合作有合有刑；表面和顺内里受制，女测尤防。",
+"壬+己":"壬为水，己为泥，水混泥土，和稀泥之象。壬为水面在上，己为私欲在下，负面情绪沉于水面之下；主想得多、内耗重、表面平静内里浑浊，容易踩坑。",
+"壬+庚":"壬为蛇，庚为太白，太白擒蛇，邪正分明。主行事受阻而刑狱公平；骗不了人，清者自清，事缓则圆。",
+"壬+辛":"壬为蛇，辛为牢，蛇缠金上，螣蛇相缠。主被人欺瞒、纠缠不休；纵得吉门亦不安宁，防连环骗局。",
+"壬+壬":"壬为天狱，两壬自刑，蛇入地罗，乱上加乱。主内部生乱、祸起萧墙；按倒葫芦浮起瓢，找不到头绪。",
+"壬+癸":"壬为罗，癸为网，天罗地网，幼女奸淫。主家丑外扬、暧昧之事；门吉为风流，星凶反福为祸。",
+"癸+戊":"癸为水，戊为高山，水合高山，天乙会合。主合作合和、财喜婚姻；吉凶由门定，门凶反招官非。",
+"癸+乙":"癸为网，乙为星，华盖逢星，网开见星。主贵人文书之喜；得吉门平安，凶门又复入网，起伏较大。",
+"癸+丙":"癸为网，丙为悖，华盖悖师，贵贱不利。主文上有阻、贵贱皆嫌；唯修养高深之人能因势利导、反怒为喜。",
+"癸+丁":"癸为蛇，丁为火，螣蛇夭矫，蛇被火燎。主文书官司、虚惊不宁；合作必散伙，防船翻车毁之灾。",
+"癸+己":"癸为水，主流动不稳定；己为土，主想法、私欲、负面情绪，想得多、易内耗。癸在上为水面，己在下为淤泥，负面情绪沉于水面之下；如水和泥混在一起，和稀泥之象，不好的东西隐藏在表面之下，容易踩坑。",
+"癸+庚":"癸为网，庚为刀，太白入网，暴力争讼。主吉事成空、以暴制暴；凡事无成，宜防冲突官非。",
+"癸+辛":"癸为网，辛为牢，网盖天牢，死罪难逃。主官司败诉、病重难医；落巽宫防牢狱，静守不动为上。",
+"癸+壬":"癸为蛇，壬为蛇，复见螣蛇，旧事重演。主重复失败、另换主人；涛声依旧无结果，宜改弦更张。",
+"癸+癸":"癸为地网，两网相叠，天网四张，不可谋事。主处处受困、结伴失散；网低愈困宜忍耐，网高匍匐小心行。"};
+var STEM_QW={"戊":"钱财、资本、土地、天门、高大、厚重","己":"私欲、幻想、坑陷、陷阱、阴沟、口舌","庚":"阻隔、敌人、丈夫、公安、道路、强硬","辛":"错误、罪人、变革、颗粒、诱惑","壬":"大水、流动、变化、不稳、智慧、迷茫","癸":"暗昧、制约、天网、隐私、困难","丁":"希望、机遇、奇迹、玉女、情人、文书","丙":"权威、乱子、炎症、第三者、太阳","乙":"希望、曲折、温柔、妻子、草木、医药"};
+var STAR_KW={"天蓬星":"胆大冒险、智慧、水盗","天任星":"老实任劳、田土、迟缓","天冲星":"急躁冲动、雷厉风行","天辅星":"文雅教育、仁慈风度","天英星":"急躁血光、电器火性","天芮星":"疾病问题、贪婪","天柱星":"口舌支撑、破败挑战","天心星":"领导心计、医药管理","天禽星":"中正包容、贵人"};
+var GATE_KW={"休门":"休养、贵人、休闲","生门":"财利、生意、房产、生机","伤门":"伤灾、竞争、车辆、讨债","杜门":"阻塞、保密、技术","景门":"文书、血光、广告","死门":"死丧、地皮、固执","惊门":"惊恐、口舌、官司","开门":"工作、公职、开业"};
+var GOD_KW={"值符":"贵人、领导、高档","螣蛇":"虚诈、惊恐、缠绕","太阴":"阴私、谋划、细腻","六合":"合作、婚姻、中介","白虎":"凶伤、阻隔、威权","玄武":"偷盗、欺骗、暧昧","九地":"稳定、低沉、拖延","九天":"高远、离开、宣扬"};
+var YONGSHEN="<p><b>通用：</b>日干＝求测人；时干＝所测之事；年命＝本人根本。</p><p><b>人事：</b>年干＝领导/长辈/父亲；月干＝兄弟姐妹/同事朋友；值符＝顶头上司/贵人；值使＝事体经办。</p><p><b>婚恋：</b>男测以乙为妻子、女测以庚为丈夫；六合＝婚姻/媒合；丙＝男性插足者；丁＝女性插足者。</p><p><b>事业钱财：</b>开门＝工作/单位/官职；生门＝利润/生意/房产；休门＝贵人/休养；值符＝单位一把手。</p><p><b>其他：</b>天芮＝疾病；天蓬＋玄武＝盗贼小人；庚＝阻隔/道路/公安；伤门＋庚＋白虎＝车祸伤灾；景门＋丁＋玄武＝文书消息。</p>";
+function godS(s){return (s&&s.indexOf("（")>0)?s.slice(0,s.indexOf("（")):s;}
+function cscCls(s){if(["长生","冠带","临官","帝旺"].indexOf(s)>=0)return "w";if(["沐浴","衰","胎","养"].indexOf(s)>=0)return "p";return "s";}
+function computeChart(y,mo,d,h){
+  var term=getTerm(y,mo,d);
+  if(!term)return null;
+  var ti=term.ti, yin=(ti>=11&&ti<=22);
+  var di=gzIndex(y,mo,d);
+  var hB=Math.floor(((h+1)%24)/2);
+  var hS=(di%10*2+hB)%10;
+  var hi=-1;for(var n=0;n<60;n++){if(n%10===hS&&n%12===hB){hi=n;break;}}
+  var xun=Math.floor(hi/10), xunS=xun*10, xunB=xunS%12, yi=XUNYI[xun];
+  var fu=-1;
+  for(var i2=di;i2>di-15;i2--){var ii=((i2%60)+60)%60;if(ii%10===0||ii%10===5){fu=ii;break;}}
+  var fb=fu%12;
+  var yuan=([0,6,3,9].indexOf(fb)>=0)?0:(([2,8,5,11].indexOf(fb)>=0)?1:2);
+  var ju=JU[term.name][yuan];
+  var dp={};var seq="戊己庚辛壬癸丁丙乙";
+  for(var k=0;k<9;k++){var p= yin? (((ju-1-k)%9)+9)%9+1 : (ju-1+k)%9+1; dp[p]=seq[k];}
+  function ridx(p){return RING.indexOf(p);}
+  var pX=-1,pT=-1;
+  var tgLook=(hS===0)?yi:STEMS[hS];
+  for(var p2=1;p2<=9;p2++){if(dp[p2]===yi)pX=p2;if(dp[p2]===tgLook)pT=p2;}
+  if(pT===5)pT=2;
+  if(pX===5)pX=2;
+  var zfStar=STARHOME[pX]||"天禽星", doorHome=DOORHOME[pX]||"死门";
+  var offS=(ridx(pT)-ridx(pX)+8)%8;
+  var tg={},starAt={},ruiPalace=2;
+  for(var pp=1;pp<=9;pp++){
+    if(pp===5)continue;
+    var np=RING[(ridx(pp)+offS)%8];
+    starAt[np]=STARHOME[pp];
+    tg[np]=dp[pp];
+    if(pp===2)ruiPalace=np;
+  }
+  var jg=dp[5];
+  var steps=(hB-xunB+12)%12;
+  var pos=pX;
+  for(var s2=0;s2<steps;s2++){pos= yin? (pos===1?9:pos-1) : (pos%9)+1;}
+  if(pos===5)pos=2;
+  var offD=(ridx(pos)-ridx(pX)+8)%8;
+  var menAt={};
+  for(var pp2=1;pp2<=9;pp2++){
+    var dn=DOORHOME[pp2];if(!dn)continue;
+    menAt[RING[(ridx(pp2)+offD)%8]]=dn;
+  }
+  var godAt={},gi=ridx(pT);
+  for(var g2=0;g2<8;g2++){
+    var idx= yin? ((gi-g2)%8+8)%8 : (gi+g2)%8;
+    godAt[RING[idx]]=GODS8[g2];
+  }
+  var marks={};for(var p3=1;p3<=9;p3++)marks[p3]=[];
+  var msB=MASTAR[hB];
+  for(var p5=1;p5<=9;p5++){if(PALBR[p5].indexOf(msB)>=0)marks[p5].push("马星");}
+  KONG[xun].forEach(function(b){for(var p4=1;p4<=9;p4++){if(PALBR[p4].indexOf(b)>=0)marks[p4].push("空亡");}});
+  var ag={};var STEMORDER=["戊","己","庚","辛","壬","癸","丁","丙","乙"];
+  var agStart=STEMORDER.indexOf(tgLook);
+  for(var a2=0;a2<9;a2++){
+    var stem2=STEMORDER[(agStart+a2)%9];
+    var pp3= yin? (((5-1-a2)%9)+9)%9+1 : (5-1+a2)%9+1;
+    ag[pp3]=stem2;
+  }
+var order=[4,9,2,3,5,7,8,1,6],out=[];
+  order.forEach(function(p6){
+    out.push({k:GONGNAME[p6],g:GONGTRI[p6],n:String(p6),
+      shen:godAt[p6]||"",men:menAt[p6]||"",star:starAt[p6]||"",
+      tg:tg[p6]||"",dg:dp[p6],mark:marks[p6].filter(function(v,ix,a){return a.indexOf(v)===ix;}).join(" "),
+      jg:(p6===ruiPalacleFix(ruiPalace)&&jg?jg+"（天禽星寄宫所带之干）":""),ag:ag[p6]||"",ag2:(p6===2&&ag[5]&&ag[5]!==ag[2])?ag[5]:"",io:(yin?[9,2,7,6]:[1,8,3,4]).indexOf(p6)>=0?"内":"外",csc:(tg[p6]&&CSC[tg[p6]])?CSC[tg[p6]][PALBC[p6]]:"",cscD:(CSC[dp[p6]])?CSC[dp[p6]][PALBC[p6]]:""});
+  });
+  function ruiPalacleFix(x){return x;}
+  var yr=y, ls=TERMS[String(y)]["立春"];
+  if(mo<ls[0]||(mo===ls[0]&&d<ls[1]))yr=y-1;
+  var yGZ=G60[(((yr-4)%60)+60)%60];
+  var mbIdx=Math.floor((ti+2)/2)%12;
+  var base=[2,4,6,8,0][((yr-4)%10+10)%10%5];
+  var mGZ=STEMS[(base+((mbIdx-2)%10+10)%10)%10]+BRS[mbIdx];
+  var info="四柱："+yGZ+" "+mGZ+" "+G60[di]+" "+G60[hi]+"｜节气："+term.name+"｜"+(yin?"阴遁":"阳遁")+ju+"局（拆补）｜旬首："+G60[xunS]+"（"+yi+"）｜值符："+zfStar.replace("星","")+"｜值使："+doorHome;
+  return {cells:out,info:info};
+}
+var PAN = [];
+
+var GONGS = {"乾": "乾为天、为太阳，主宰万物。象：圆、原始、向上、高亢、核心、精华、健全、创造、统帅。性情：刚健勇武、重情讲义、动而少静、威严豁达、正直勤勉、自尊高傲。人物：主席、一把手、主要领导、总经理、老板、祖父、父亲、名流、专家。地理：西北方、京都、大城市、高亢之所、名胜古迹、大会堂、大厦、金属工厂。人体：头、面部、右腿、肺、骨骼、男性生殖器、胸部。应期：秋、九月十月之交，戌亥年月日时。色：大赤、金黄、白。", "坎": "坎为水，陷落之象，主艰难险阻，曲折多变、永不止息。性情：外柔内刚、随波逐流、善谋多智、城府深、善算计。象：聪明智慧、忧愁苦难、漂泊不定、沉沦隐伏。人物：中男、江湖之人、盗贼、医生、逃亡者、心理学家、酒鬼。地理：北方、江河湖海、溪涧泉井、沟渠洼地、下水道、鱼池、酒吧、消防队。人体：肾、膀胱、泌尿生殖系统、血液、耳、肛门。应期：冬十一月，子年月日时。色：黑、紫。", "艮": "艮为土、为山、为止，主阻隔艰难，静止安定。性情：保守固执、憨厚稳重、诚实谨慎、安静笃实、任劳任怨。象：静止、稳定、固守、等待、困难、迟滞。人物：少男、山中人、童子、土建人员、宗教人员、警卫、矿工、房地产商、犯人。地理：东北方、山径丘陵、坟墓、休息室、大楼、仓库、矿山、监狱、派出所、银行。人体：鼻、背部、手指、关节、左腿、脚趾、脾胃。应期：冬春之交，丑寅年月日时。色：黄、棕、咖啡。", "震": "震为雷，使万物运动、勇敢直前。性情：易怒性急、多动少静、勤奋直爽、自尊心强、倔强。象：奋进上升、躁动积极、妄动多动、性急冲动、迅速、影响大。人物：长男、青年、名人、将帅、驾驶员、运动员、军人、警察、法官、音乐家、易发怒的人。地理：东方、树林、闹市、广播电台、歌舞厅、公安机关、机场、战场、运动场、乐器店。人体：足、肝、发、声音、左肋。应期：春二月，卯年月日时。色：青绿、碧色。", "巽": "巽为风，使万物消散，好动而慢、进退无常。性情：进退不果、柔和谦虚、心情不定、虚情假意、没有主见。象：自由运动、流动徘徊、不稳定、渗透、忙碌奔波、轻浮、空虚。人物：长女、科技人员、教师、僧尼、商人、狡猾者、优柔寡断者、文人、公关人员、能工巧匠。地理：东南方、草原、寺观楼台、邮局、过道长廊、工艺厂、码头、管道、电梯。人体：股、胆、气管、神经、左肩、耳。应期：春夏之交，辰巳年月日时。色：青绿、碧绿、洁白。", "离": "离为火，外刚内柔、好动而燥。性情：重礼爱美、喜装扮、虚心好学、知书达理、易冲动、性急暴躁、内心空虚。象：光明、文明、华丽鲜艳、光彩照人、流行时尚、装饰、文章、巧言聪明。人物：中女、文人、目疾人、中层干部、美人、美容师、作家、演员、画家、艺术家、多情人。地理：南方、朝阳场所、电影院、图书馆、印刷厂、冶炼厂、电视台、火车站、电厂、广告牌。人体：眼睛、头部、血液、心脏。应期：夏五月，午年月日时。色：红、赤、紫、花色。", "坤": "坤为地，有生化万物之功，平稳发展、包容含蓄。性情：温厚柔顺、感情暧昧、守信诚实、卑贱狭小、固执保守。象：柔顺平稳、包容含蓄、消极沉默、优柔寡断、懦弱迟缓、敬奉神佛。人物：母亲、妇人、农民、群众、房地产经营者、老板娘、胖女人、忠厚之人。地理：西南方、田野乡村、大地、农贸市场、故乡、矮屋、底层。人体：腹、右肩、耳、胃、肌肉、女性生殖器、肠。应期：农历六七月，辰戌丑未年月日时。色：深黄、黑。", "兑": "兑为泽、为说，性偏激好静，言词喜悦。性情：喜悦、口舌是非、拍马奉承、开朗、温和、多愁善感。象：口舌、笑骂、吵闹、雄辩、娱乐、歌唱、亲密、爱欲、魅力。人物：少女、歌手、话务员、律师、讲解员、翻译、巫师、媒婆、导游、相声演员、音乐家。地理：西方、沼泽、峡谷、湖泊、滑冰场、咖啡馆、音乐厅、娱乐场、影剧院、会议室。人体：口、舌、牙齿、咽喉、肺、右肋、肛门。应期：秋八月，酉年月日时。色：白、浅黄、金。", "中": "中五宫为值符（甲子戊）所在，土性，包容人间万物，中和平稳；预测中一般寄于坤二宫（天禽随天芮运转），论吉凶阴阳同看。"};
+var CURPAN=0;
+function renderPanGrid(){
+  var g=document.getElementById("pangrid");
+  g.innerHTML=PAN.map(function(c,i){
+    return '<div class="pcell'+(i===CURPAN?' on':'')+'" data-i="'+i+'">'+
+      '<div class="pc-hd"><span>'+(c.n==="5"?"":'<span class="pc-io '+(c.io==="内"?"in":"out")+'" title="'+(c.io==="内"?"内盘·现在近快":"外盘·将来远慢")+'"></span>')+c.n+' '+c.k+'</span>'+(c.mark?'<span class="mark">'+c.mark.split(' ').map(function(m){return '<i class="'+(m==='马星'?'mk-ms':'mk-kw')+'">'+(m==='马星'?'马':'空')+'</i>';}).join('')+'</span>':'')+'</div>'+
+      (c.n==="5"?"":'<div class="pc-god">'+godS(c.shen)+'</div>')+
+      '<div class="pc-men">'+c.men+'</div>'+
+      '<div class="pc-tg">'+(c.jg?'<span class="pc-jg">'+c.jg.charAt(0)+'</span>':'')+'<div class="pc-tgc">'+(c.tg||"·")+(c.csc?'<span class="pc-csc '+cscCls(c.csc)+'">'+c.csc+'</span>':'')+'</div></div>'+
+      '<div class="pc-star">'+(c.star||"")+'</div>'+
+      '<div class="pc-dg">'+c.dg+'</div>'+
+      (c.n==="5"?"":'<div class="pc-ft">暗干 '+(c.ag||"—")+(c.ag2?(' · '+c.ag2+'(中宫)'):"")+(c.jg?(' · 寄'+c.jg.charAt(0)):'')+'</div>')+
+    '</div>';
+  }).join("");
+  qa(g,".pcell").forEach(function(el){el.onclick=function(){CURPAN=+el.dataset.i;renderPanGrid();renderPanCell();};});
+}
+function symFind(cat,name){return SYMS[cat].filter(function(s){return s.n.indexOf(name)===0})[0];}
+function renderPanCell(showModal){
+  var c=PAN[CURPAN],d=document.getElementById("pandetail");
+  var ke=KE.filter(function(r){return r.g===c.tg&&r.d===c.dg})[0];
+  var st=symFind("star",c.star),ga=symFind("gate",c.men),go=symFind("god",c.shen);
+  var h='<h3>'+c.k+'（'+(c.mark?c.mark+" · ":"")+'第'+c.n+'宫）</h3>';
+  h+='<div class="sec"><b>宫位象义：</b>'+GONGS[c.g]+'</div>';
+  if(c.n==="5")h+='<div class="sec"><b>提示：</b>中宫无门、神，天禽星寄于坤二宫，十干克应请参看坤二宫（含寄干）。</div>';
+  if(ke){
+    h+='<div class="sec"><b>十干克应（天盘'+c.tg+'+地盘'+c.dg+' = '+ke.pair+'　'+esc(ke.n)+'）</b>'+badge(ke.l)+
+        '<div style="margin-top:6px">'+esc(ke.t)+'</div>'+
+        (ke.x?'<div class="xj" style="margin-top:8px">'+esc(ke.x)+'</div>':"")+
+        '<div class="recip">前往「十干克应」查看完整条目</div></div>';
+  }
+  h+='<div class="sec"><b>十二长生：</b>天盘'+(c.tg||'—')+(c.csc?('得「'+c.csc+'」之地——'+CSCMEAN[c.csc]):'（不论）')+'；地盘'+c.dg+(c.cscD?('得「'+c.cscD+'」之地——'+CSCMEAN[c.cscD]):'')+'。（四维宫以寅巳申亥取支）</div>';
+  if(c.jg)h+='<div class="sec"><b>寄宫之干：</b>'+c.jg+'，论克应逢合须兼看天禽/天芮所带之干。</div>';
+  if(st)h+='<div class="sec"><b>九星（'+st.n+'）：</b>'+st.tag+'。'+st.x+' <b>相貌：</b>'+st.a+'</div>';
+  if(ga)h+='<div class="sec"><b>八门（'+ga.n+'）：</b>'+ga.tag+'。'+ga.x+' <b>相貌：</b>'+ga.a+'</div>';
+  if(go)h+='<div class="sec"><b>八神（'+godS(go.n)+'）：</b>'+godS(go.tag)+'。'+go.x+'</div>';
+  var gk=c.shen.indexOf("（")>0?c.shen.slice(0,c.shen.indexOf("（")):c.shen;
+  var qx='';
+  var xy=XXY[c.tg+'+'+c.dg];
+  if(xy)qx+=xy+' ';
+  if(c.tg)qx+='天盘'+c.tg+'——'+(STEM_QW[c.tg]||'')+'；';
+  qx+='地盘'+c.dg+'——'+(STEM_QW[c.dg]||'')+'。';
+  if(ke){var kxs=ke.x?ke.x.split('。')[0]:'';if(kxs.length>90)kxs=kxs.slice(0,90);qx+='「'+ke.pair+'·'+ke.n+'」'+(kxs?kxs+'。':'主事见克应断语。');}
+  if(st)qx+='临'+st.n.replace('星','')+'星，主'+(STAR_KW[st.n]||'')+'；';
+  if(ga)qx+='临'+ga.n+'，主'+(GATE_KW[ga.n]||'')+'；';
+  if(go)qx+='临'+gk+'，主'+(GOD_KW[gk]||'')+'。';
+  qx+='落'+c.k+'，'+(c.csc?('天盘'+c.tg+'在此得「'+c.csc+'」（'+CSCMEAN[c.csc]+'）；'):'')+(c.mark?('本宫'+c.mark+'；'):'')+(c.io==='内'?'属内盘，主现在、近、快。':'属外盘，主将来、远、慢。');
+  h+='<div class="sec"><b>奇仪取象：</b>'+qx+'</div>';
+  h+='<details><summary>常用用神速查（问谁问何事先选准用神）</summary><div class="ref">'+YONGSHEN+'</div></details>';
+  d.innerHTML=h;
+  if(showModal!==false){
+    document.getElementById("pandlg-title").textContent=c.k+(c.mark?(" · "+c.mark):"")+" · 宫位详解";
+    document.getElementById("panmodal").style.display="flex";
+    d.scrollTop=0;
+    document.body.style.overflow="hidden";
+    var bn=document.getElementById("bnav");if(bn){bn.style.display="none";}
+  }
+}
+function bjNow(){var d=new Date();return new Date(d.getTime()+(d.getTimezoneOffset()+480)*60000);}
+function fillPan(n){
+  document.getElementById("py").value=n.getFullYear();
+  document.getElementById("pm").value=n.getMonth()+1;
+  document.getElementById("pd").value=n.getDate();
+  document.getElementById("ph").value=n.getHours();
+  document.getElementById("pmin").value=n.getMinutes();
+}
+function initPan(){
+  var n=bjNow();
+  fillPan(n);
+  var r=computeChart(n.getFullYear(),n.getMonth()+1,n.getDate(),n.getHours());
+  PAN=r.cells;
+  document.getElementById("paninfo").textContent=r.info;
+  document.getElementById("btnnow").onclick=function(){
+    var n2=bjNow();fillPan(n2);
+    document.getElementById("btnqi").onclick();
+  };
+  document.getElementById("btnqi").onclick=function(){
+    var y=+document.getElementById("py").value,mo=+document.getElementById("pm").value,
+        d=+document.getElementById("pd").value,hh=+document.getElementById("ph").value,
+        mi=+document.getElementById("pmin").value||0;
+    if(!y||!mo||!d||isNaN(hh)||hh<0||hh>23||isNaN(mi)||mi<0||mi>59){alert("请输入正确的公历日期时间（时0-23，分0-59）");return;}
+    var r2=computeChart(y,mo,d,Math.floor(hh));
+    if(!r2){alert("该年份暂无节气数据（当前支持2023-2035年）");return;}
+    PAN=r2.cells;CURPAN=0;
+    document.getElementById("paninfo").textContent=r2.info;
+    renderPanGrid();closePan();
+  };
+}
+initPan();
+renderPanGrid();
+refresh();
+switchTab("pan");
+</script></body>
+</html>
